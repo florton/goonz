@@ -5,29 +5,88 @@ using UnityEngine.Tilemaps;
 
 public class TileManager : MonoBehaviour
 {   
+    static public int mapSize = 10;
+
+    private GameObject[,] mapTileSprites = new GameObject[mapSize, mapSize];
+    private string[,] mapTileTypes = new string[mapSize, mapSize];
+    private Dictionary<string, Dictionary<string, Sprite[]>> groundTypes = new Dictionary<string, Dictionary<string, Sprite[]>>();
+    private bool mapDidChange = false;
+
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
         Grid grid = GetComponent<Grid>();
-        for (int x = 0; x < 10; x++)
-        {
-            for (int y = 0; y < 10; y++)
-            {
 
-                GameObject tile = new GameObject();
-                tile.transform.position = new Vector3(x, y, 0);
-                tile.transform.parent = grid.transform;
-                SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
-                Sprite sprite = Resources.Load("Sprites/test", typeof(Sprite)) as Sprite;
-                renderer.sprite = sprite;
-
+        // load sprites into dictionary by type and position
+        Sprite[] groundSprites = Resources.LoadAll<Sprite>("Sprites/Ground");
+        string[] groundTypeNames = new string[] {"grass", "sand", "dirt", "water"};
+        for (int x = 0; x < groundTypeNames.Length; x++){
+            groundTypes.Add(groundTypeNames[x], new Dictionary<string, Sprite[]>());
+            // edges
+            groundTypes[groundTypeNames[x]].Add("edge", new Sprite[8]);
+            for(int y = 0; y<= 7; y++){
+                groundTypes[groundTypeNames[x]]["edge"][y] = groundSprites[y];
+            }
+            // full
+            groundTypes[groundTypeNames[x]].Add("full", new Sprite[3]);
+            for(int y = 8; y<= 10; y++){
+                groundTypes[groundTypeNames[x]]["full"][y - 8] = groundSprites[y];
+            }
+            // corners
+            groundTypes[groundTypeNames[x]].Add("corner", new Sprite[4]);
+            for(int y = 11; y<= 14; y++){
+                groundTypes[groundTypeNames[x]]["corner"][y - 11] = groundSprites[y];
             }
         }
+
+        // intialize initial sprite postions
+        for (int x = 0; x < mapSize; x++){
+            for (int y = 0; y < mapSize; y++){
+
+                GameObject tile = new GameObject();
+                tile.transform.position = new Vector3(x + (float)0.5, y + (float)0.5, 1);
+                tile.transform.localScale = new Vector3((float)6.25, (float)6.25, 0);
+                tile.transform.parent = grid.transform;
+                SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
+                Sprite sprite = groundTypes["grass"]["full"][0];
+                renderer.sprite = sprite;
+                mapTileSprites[x, y] = tile;
+                mapTileTypes[x, y] = "grass";
+            }
+        }
+        mapDidChange = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (mapDidChange) {
+
+            Grid grid = GetComponent<Grid>();
+
+            for (int x = 0; x < mapSize; x++){
+                for (int y = 0; y < mapSize; y++){
+                    // check 4 edges for same type
+                    if(x <= 0 || mapTileTypes[x - 1 , y] != mapTileTypes[x, y]){
+                        GameObject tile = new GameObject();
+                        tile.transform.position = new Vector3(x - 1 + (float)0.5, y + (float)0.5, 1);
+                        tile.transform.localScale = new Vector3((float)6.25, (float)6.25, 0);
+                        tile.transform.parent = grid.transform;
+                        SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
+                        Sprite sprite = groundTypes["grass"]["edge"][0];
+                        tile.transform.Rotate(new Vector3(0, 0, 90));
+                        renderer.sprite = sprite;
+                    }
+                    //if(x >= mapSize - 1 || mapTileTypes[x + 1 , y] != mapTileTypes[x, y]){
+
+                    //}
+                    //if(y <= 0 || mapTileTypes[x , y - 1] != mapTileTypes[x, y]){
+
+                    //}
+                    //if(y >= mapSize - 1|| mapTileTypes[x, y + 1] != mapTileTypes[x, y]){
+
+                    //}
+                }
+            }
+        }
     }
 }
