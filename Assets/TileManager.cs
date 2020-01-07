@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class TileManager : MonoBehaviour
 {   
+    public Material spriteMaterial;
+
     static public int mapSize = 10;
     static public string startingTileType = "sand";
     private GameObject[,] mapTiles = new GameObject[mapSize, mapSize];
@@ -19,6 +21,7 @@ public class TileManager : MonoBehaviour
         tile.transform.localScale = new Vector3((float)6.5, (float)6.5, 0);
         tile.transform.parent = grid.transform;
         SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
+        renderer.material = spriteMaterial;
         int randSpriteIndex = Random.Range(0, groundTypes[type][position].Length);
         Sprite sprite = groundTypes[type][position][randSpriteIndex];
         renderer.sprite = sprite;
@@ -40,6 +43,7 @@ public class TileManager : MonoBehaviour
         tile.transform.Rotate(rotation);
         int edgeIndex = System.Convert.ToInt32(rotation.z / 90);
         edgeIndex = position == "corner" ? edgeIndex + 4 : edgeIndex;
+        // Object.DestroyImmediate(mapTileEdges[x + 1, y + 1, edgeIndex]);
         mapTileEdges[x + 1, y + 1, edgeIndex] = tile;  
     }
 
@@ -48,7 +52,8 @@ public class TileManager : MonoBehaviour
         int randSpriteIndex = Random.Range(0, groundTypes[type]["full"].Length);
         mapTiles[x, y].GetComponent<SpriteRenderer>().sprite = groundTypes[type]["full"][randSpriteIndex];
         for (int z = 0; z < 8; z++){
-            mapTileEdges[x, y, z] = null;
+             // Object.DestroyImmediate(mapTileEdges[x + 1, y + 1, z]);
+             mapTileEdges[x + 1, y + 1, z] = null;
         }        
         CreateEdgesForTile(x, y);
     }
@@ -59,26 +64,22 @@ public class TileManager : MonoBehaviour
 
     void CreateEdgesForTile(int x, int y){
         string currentTileType =  mapTileTypes[x, y];
-        bool emptyN = false;
-        bool emptyE = false;
-        bool emptyS = false;
-        bool emptyW = false;
+        bool emptyN = y >= mapSize - 1|| mapTileTypes[x, y + 1] != currentTileType;
+        bool emptyE = x >= mapSize - 1 || mapTileTypes[x + 1 , y] != currentTileType;
+        bool emptyS = y <= 0 || mapTileTypes[x , y - 1] != currentTileType;
+        bool emptyW = x <= 0 || mapTileTypes[x - 1 , y] != currentTileType;
         // check 4 edges for same type
-        if(x <= 0 || mapTileTypes[x - 1 , y] != currentTileType){
+        if(emptyW){
             CreateEdgeTile(x - 1, y, currentTileType, "edge", new Vector3(0, 0, 90));
-            emptyW = true;
         }
-        if(x >= mapSize - 1 || mapTileTypes[x + 1 , y] != currentTileType){
+        if(emptyE){
             CreateEdgeTile(x + 1, y, currentTileType, "edge", new Vector3(0, 0, 270));
-            emptyE = true;
         }
-        if(y <= 0 || mapTileTypes[x , y - 1] != currentTileType){
+        if(emptyS){
             CreateEdgeTile(x, y - 1, currentTileType, "edge", new Vector3(0, 0, 180));
-            emptyS = true;
         }
-        if(y >= mapSize - 1|| mapTileTypes[x, y + 1] != currentTileType){
+        if(emptyN){
             CreateEdgeTile(x, y + 1, currentTileType, "edge", Vector3.zero);
-            emptyN = true;
         }
         if(emptyN && emptyE){
             CreateEdgeTile(x + 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 270));
@@ -99,27 +100,27 @@ public class TileManager : MonoBehaviour
         grid = GetComponent<Grid>();
 
         // load sprites into dictionary by type and position
+        // each ground type has 15 total sprites on the spritesheet 
         Sprite[] groundSprites = Resources.LoadAll<Sprite>("Sprites/Ground");
         string[] groundTypeNames = new string[] {"grass", "sand", "dirt"};
         for (int x = 0; x < groundTypeNames.Length; x++){
             groundTypes.Add(groundTypeNames[x], new Dictionary<string, Sprite[]>());
-            // edges
+            // edges 0 - 7 on sprite sheet
             groundTypes[groundTypeNames[x]].Add("edge", new Sprite[8]);
             for(int y = 0; y<= 7; y++){
                 groundTypes[groundTypeNames[x]]["edge"][y] = groundSprites[y + (x * 15)];
             }
-            // full
+            // full 8 - 10 on sprite sheet
             groundTypes[groundTypeNames[x]].Add("full", new Sprite[3]);
             for(int y = 8; y<= 10; y++){
                 groundTypes[groundTypeNames[x]]["full"][y - 8] = groundSprites[y + (x * 15)];
             }
-            // corners
+            // corners 11 - 14 on sprite sheet
             groundTypes[groundTypeNames[x]].Add("corner", new Sprite[4]);
             for(int y = 11; y<= 14; y++){
                 groundTypes[groundTypeNames[x]]["corner"][y - 11] = groundSprites[y + (x * 15)];
             }
         }
-
 
         // intialize initial sprite postions
         for (int x = 0; x < mapSize; x++){
