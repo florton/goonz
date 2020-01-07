@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float speed;
     private Rigidbody2D player;
     private Vector3 change;
+    public TileManager tileManager;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +25,17 @@ public class PlayerMovement : MonoBehaviour
         if (change != Vector3.zero) {
             MoveCharacter();
         }
-        // place tile with space
+        // place "dirt" tile with space
+        if(Input.GetKeyDown("space")){
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.back);
+            GameObject tile = hit.collider.gameObject;
+            tileManager.SetMapTileType(
+                System.Convert.ToInt32(tile.transform.position.x - 0.5),
+                System.Convert.ToInt32(tile.transform.position.y - 0.5),
+                "dirt"
+            );
+        }
+
         // todo
     }
 
