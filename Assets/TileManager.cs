@@ -15,54 +15,72 @@ public class TileManager : MonoBehaviour
     private Dictionary<string, Dictionary<string, Sprite[]>> groundTypes = new Dictionary<string, Dictionary<string, Sprite[]>>();
     private Grid grid;
 
+    Sprite GetRandomSpriteOfTypeAndPosition(string type, string position){
+        int randSpriteIndex = Random.Range(0, groundTypes[type][position].Length);
+        Sprite sprite = groundTypes[type][position][randSpriteIndex];
+        return sprite;
+    }
+
     GameObject CreateTile(int x, int y, string type, string position){
         GameObject tile = new GameObject();
-        tile.transform.position = new Vector3(x + (float)0.5, y + (float)0.5, 1);
+        tile.transform.position = new Vector3(x + (float)0.5, y + (float)0.5);
         tile.transform.localScale = new Vector3((float)6.5, (float)6.5, 0);
         tile.transform.parent = grid.transform;
         SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
         renderer.material = spriteMaterial;
-        int randSpriteIndex = Random.Range(0, groundTypes[type][position].Length);
-        Sprite sprite = groundTypes[type][position][randSpriteIndex];
-        renderer.sprite = sprite;
+        renderer.sprite = GetRandomSpriteOfTypeAndPosition(type, position);
         BoxCollider2D boxCollider2D = tile.AddComponent<BoxCollider2D>();
-        tile.layer = 9; //map layer
         return tile;
     }
 
     void CreateMapTile(int x, int y, string type, string position){
         GameObject tile = CreateTile(x, y, type, position);
+        tile.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        tile.layer = 18; //map layer
         mapTiles[x, y] = tile;
         mapTileTypes[x, y] = type;
-        CreateEdgesForTile(x, y);
+        ClearEdgeTilesAtPosition(x, y);
+        GenerateTileEdges(x, y);
     }
 
-    void CreateEdgeTile(int x, int y, string type, string position, Vector3 rotation){
-        // rotation z must be 0, 90, 180, or 270
-        GameObject tile = CreateTile(x, y, type, position);
-        tile.transform.Rotate(rotation);
+    void CreateOrSetEdgeTile(int x, int y, string type, string position, Vector3 rotation){
+        // rotation z must be 0, 90, 180, or 270       
         int edgeIndex = System.Convert.ToInt32(rotation.z / 90);
+        GameObject edgeTile = mapTileEdges[x + 1, y + 1, edgeIndex];
         edgeIndex = position == "corner" ? edgeIndex + 4 : edgeIndex;
-        // Object.DestroyImmediate(mapTileEdges[x + 1, y + 1, edgeIndex]);
-        mapTileEdges[x + 1, y + 1, edgeIndex] = tile;  
+        if (!edgeTile){
+            edgeTile = CreateTile(x, y, type, position);
+            edgeTile.GetComponent<SpriteRenderer>().sortingOrder = 2;
+            edgeTile.layer = 17; //map edge layer
+            edgeTile.transform.Rotate(rotation);
+        } else {
+            edgeTile.GetComponent<SpriteRenderer>().sprite = GetRandomSpriteOfTypeAndPosition(type, position);
+        }
+        mapTileEdges[x + 1, y + 1, edgeIndex] = edgeTile;  
+    }
+
+    void ClearEdgeTilesAtPosition (int x, int y){
+        for (int z = 0; z < 8; z++){
+            GameObject edgeTile = mapTileEdges[x + 1, y + 1, z];
+            if(edgeTile){
+                edgeTile.GetComponent<SpriteRenderer>().sprite = null;
+            }
+        }   
     }
 
     public void SetMapTileType(int x, int y, string type){
         mapTileTypes[x, y] = type;
         int randSpriteIndex = Random.Range(0, groundTypes[type]["full"].Length);
         mapTiles[x, y].GetComponent<SpriteRenderer>().sprite = groundTypes[type]["full"][randSpriteIndex];
-        for (int z = 0; z < 8; z++){
-             // Object.DestroyImmediate(mapTileEdges[x + 1, y + 1, z]);
-             mapTileEdges[x + 1, y + 1, z] = null;
-        }        
-        CreateEdgesForTile(x, y);
+        ClearEdgeTilesAtPosition(x, y);     
+        GenerateTileEdges(x, y);
     }
 
     public string GetMapTileType(int x, int y){
         return mapTileTypes[x, y];
     }
 
-    void CreateEdgesForTile(int x, int y){
+    void GenerateTileEdges(int x, int y){
         string currentTileType =  mapTileTypes[x, y];
         bool emptyN = y >= mapSize - 1|| mapTileTypes[x, y + 1] != currentTileType;
         bool emptyE = x >= mapSize - 1 || mapTileTypes[x + 1 , y] != currentTileType;
@@ -70,28 +88,28 @@ public class TileManager : MonoBehaviour
         bool emptyW = x <= 0 || mapTileTypes[x - 1 , y] != currentTileType;
         // check 4 edges for same type
         if(emptyW){
-            CreateEdgeTile(x - 1, y, currentTileType, "edge", new Vector3(0, 0, 90));
+            CreateOrSetEdgeTile(x - 1, y, currentTileType, "edge", new Vector3(0, 0, 90));
         }
         if(emptyE){
-            CreateEdgeTile(x + 1, y, currentTileType, "edge", new Vector3(0, 0, 270));
+            CreateOrSetEdgeTile(x + 1, y, currentTileType, "edge", new Vector3(0, 0, 270));
         }
         if(emptyS){
-            CreateEdgeTile(x, y - 1, currentTileType, "edge", new Vector3(0, 0, 180));
+            CreateOrSetEdgeTile(x, y - 1, currentTileType, "edge", new Vector3(0, 0, 180));
         }
         if(emptyN){
-            CreateEdgeTile(x, y + 1, currentTileType, "edge", Vector3.zero);
+            CreateOrSetEdgeTile(x, y + 1, currentTileType, "edge", Vector3.zero);
         }
         if(emptyN && emptyE){
-            CreateEdgeTile(x + 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 270));
+            CreateOrSetEdgeTile(x + 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 270));
         }
         if(emptyE && emptyS){
-            CreateEdgeTile(x + 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 180));
+            CreateOrSetEdgeTile(x + 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 180));
         }
         if(emptyS && emptyW){
-            CreateEdgeTile(x - 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 90));
+            CreateOrSetEdgeTile(x - 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 90));
         }
         if(emptyW && emptyN){
-            CreateEdgeTile(x - 1, y + 1, currentTileType, "corner", Vector3.zero);
+            CreateOrSetEdgeTile(x - 1, y + 1, currentTileType, "corner", Vector3.zero);
         }
     }
 
