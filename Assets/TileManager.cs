@@ -29,6 +29,13 @@ public class TileManager : MonoBehaviour
         mapTileEdgeSprites[x + 1, y + 1] = tile;  
     }
 
+    public void SetMapTileType(int x, int y, string type){
+        mapTileTypes[x, y] = type;
+        int randSpriteIndex = Random.Range(0, groundTypes[type]["full"].Length);
+        mapTileSprites[x, y].GetComponent<SpriteRenderer>().sprite = groundTypes[type]["full"][randSpriteIndex];
+        mapDidChange = true;
+    }
+
     // Start is called before the first frame update
     void Start(){
         // load sprites into dictionary by type and position
@@ -74,52 +81,53 @@ public class TileManager : MonoBehaviour
             Grid grid = GetComponent<Grid>();
             for (int x = 0; x < mapSize; x++){
                 for (int y = 0; y < mapSize; y++){
+                    string currentTileType =  mapTileTypes[x, y];
                     bool emptyN = false;
                     bool emptyE = false;
                     bool emptyS = false;
                     bool emptyW = false;
                     // check 4 edges for same type
-                    if(x <= 0 || mapTileTypes[x - 1 , y] != mapTileTypes[x, y]){
-                        GameObject tile = CreateTile(grid, x - 1, y, startingTileType, "edge");
+                    if(x <= 0 || mapTileTypes[x - 1 , y] != currentTileType){
+                        GameObject tile = CreateTile(grid, x - 1, y, currentTileType, "edge");
                         tile.transform.Rotate(new Vector3(0, 0, 90));
                         AddEdgeToEdgeMap(x - 1, y , tile);
                         emptyW = true;
                     }
-                    if(x >= mapSize - 1 || mapTileTypes[x + 1 , y] != mapTileTypes[x, y]){
-                        GameObject tile = CreateTile(grid, x + 1, y, startingTileType, "edge");
+                    if(x >= mapSize - 1 || mapTileTypes[x + 1 , y] != currentTileType){
+                        GameObject tile = CreateTile(grid, x + 1, y, currentTileType, "edge");
                         tile.transform.Rotate(new Vector3(0, 0, -90));
                         AddEdgeToEdgeMap(x + 1, y , tile);
                         emptyE = true;
                     }
-                    if(y <= 0 || mapTileTypes[x , y - 1] != mapTileTypes[x, y]){
-                        GameObject tile = CreateTile(grid, x, y - 1, startingTileType, "edge");
+                    if(y <= 0 || mapTileTypes[x , y - 1] != currentTileType){
+                        GameObject tile = CreateTile(grid, x, y - 1, currentTileType, "edge");
                         tile.transform.Rotate(new Vector3(0, 0, 180));
                         AddEdgeToEdgeMap(x, y - 1, tile);
                         emptyS = true;
                     }
-                    if(y >= mapSize - 1|| mapTileTypes[x, y + 1] != mapTileTypes[x, y]){
-                        GameObject tile = CreateTile(grid, x, y + 1, startingTileType, "edge");
+                    if(y >= mapSize - 1|| mapTileTypes[x, y + 1] != currentTileType){
+                        GameObject tile = CreateTile(grid, x, y + 1, currentTileType, "edge");
                         // tile.transform.Rotate(new Vector3(0, 0, 0));
                         AddEdgeToEdgeMap(x, y + 1, tile);
                         emptyN = true;
                     }
                     if(emptyN && emptyE){
-                        GameObject tile = CreateTile(grid, x + 1, y + 1, startingTileType, "corner");
+                        GameObject tile = CreateTile(grid, x + 1, y + 1, currentTileType, "corner");
                         tile.transform.Rotate(new Vector3(0, 0, -90));
                         AddEdgeToEdgeMap(x + 1, y + 1 , tile);
                     }
                     if(emptyE && emptyS){
-                        GameObject tile = CreateTile(grid, x + 1, y - 1, startingTileType, "corner");
+                        GameObject tile = CreateTile(grid, x + 1, y - 1, currentTileType, "corner");
                         tile.transform.Rotate(new Vector3(0, 0, 180));
                         AddEdgeToEdgeMap(x + 1, y - 1 , tile);
                     }
                     if(emptyS && emptyW){
-                        GameObject tile = CreateTile(grid, x - 1, y - 1, startingTileType, "corner");
+                        GameObject tile = CreateTile(grid, x - 1, y - 1, currentTileType, "corner");
                         tile.transform.Rotate(new Vector3(0, 0, 90));
                         AddEdgeToEdgeMap(x - 1, y - 1 , tile);
                     }
                     if(emptyW && emptyN){
-                        GameObject tile = CreateTile(grid, x - 1, y + 1, startingTileType, "corner");
+                        GameObject tile = CreateTile(grid, x - 1, y + 1, currentTileType, "corner");
                         // tile.transform.Rotate(new Vector3(0, 0, 0));
                         AddEdgeToEdgeMap(x - 1, y + 1, tile);
                     }

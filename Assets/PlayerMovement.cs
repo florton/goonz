@@ -17,12 +17,15 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // move character
         change = Vector3.zero;
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
         if (change != Vector3.zero) {
             MoveCharacter();
         }
+        // place tile with space
+        // todo
     }
 
     void MoveCharacter() 
