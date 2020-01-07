@@ -46,17 +46,24 @@ public class TileManager : MonoBehaviour
     void CreateOrSetEdgeTile(int x, int y, string type, string position, Vector3 rotation){
         // rotation z must be 0, 90, 180, or 270       
         int edgeIndex = System.Convert.ToInt32(rotation.z / 90);
-        GameObject edgeTile = mapTileEdges[x + 1, y + 1, edgeIndex];
         edgeIndex = position == "corner" ? edgeIndex + 4 : edgeIndex;
-        if (!edgeTile){
+        GameObject edgeTile = mapTileEdges[x + 1, y + 1, edgeIndex];
+        if (!edgeTile || !edgeTile.GetComponent<SpriteRenderer>()){
             edgeTile = CreateTile(x, y, type, position);
-            edgeTile.GetComponent<SpriteRenderer>().sortingOrder = 2;
             edgeTile.layer = 17; //map edge layer
             edgeTile.transform.Rotate(rotation);
         } else {
             edgeTile.GetComponent<SpriteRenderer>().sprite = GetRandomSpriteOfTypeAndPosition(type, position);
+        } 
+        // lower previous edge tiles z indexes by one to maintain sorting order
+        for (int z = 0; z < 8; z++){
+            GameObject previousEdgeTile = mapTileEdges[x + 1, y + 1, z];
+            if(previousEdgeTile){
+                previousEdgeTile.GetComponent<SpriteRenderer>().sortingOrder -= 1;
+            }                
         }
-        mapTileEdges[x + 1, y + 1, edgeIndex] = edgeTile;  
+        edgeTile.GetComponent<SpriteRenderer>().sortingOrder = 9; // max edge tile sorting later
+        mapTileEdges[x + 1, y + 1, edgeIndex] = edgeTile;
     }
 
     void ClearEdgeTilesAtPosition (int x, int y){
@@ -69,11 +76,13 @@ public class TileManager : MonoBehaviour
     }
 
     public void SetMapTileType(int x, int y, string type){
-        mapTileTypes[x, y] = type;
-        int randSpriteIndex = Random.Range(0, groundTypes[type]["full"].Length);
-        mapTiles[x, y].GetComponent<SpriteRenderer>().sprite = groundTypes[type]["full"][randSpriteIndex];
-        ClearEdgeTilesAtPosition(x, y);     
-        GenerateTileEdges(x, y);
+        if (mapTileTypes[x, y] != type){
+            mapTileTypes[x, y] = type;
+            int randSpriteIndex = Random.Range(0, groundTypes[type]["full"].Length);
+            mapTiles[x, y].GetComponent<SpriteRenderer>().sprite = groundTypes[type]["full"][randSpriteIndex];
+            ClearEdgeTilesAtPosition(x, y);     
+            GenerateTileEdges(x, y);
+        }
     }
 
     public string GetMapTileType(int x, int y){
@@ -97,7 +106,7 @@ public class TileManager : MonoBehaviour
             CreateOrSetEdgeTile(x, y - 1, currentTileType, "edge", new Vector3(0, 0, 180));
         }
         if(emptyN){
-            CreateOrSetEdgeTile(x, y + 1, currentTileType, "edge", Vector3.zero);
+            CreateOrSetEdgeTile(x, y + 1, currentTileType, "edge", new Vector3(0, 0, 0));
         }
         if(emptyN && emptyE){
             CreateOrSetEdgeTile(x + 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 270));
@@ -109,7 +118,7 @@ public class TileManager : MonoBehaviour
             CreateOrSetEdgeTile(x - 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 90));
         }
         if(emptyW && emptyN){
-            CreateOrSetEdgeTile(x - 1, y + 1, currentTileType, "corner", Vector3.zero);
+            CreateOrSetEdgeTile(x - 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 0));
         }
     }
 
