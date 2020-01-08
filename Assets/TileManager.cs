@@ -93,23 +93,6 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    public string GetMapTileType(int x, int y){
-        return mapTileTypes[x, y];
-    }
-
-    public bool IsMapEdgeAtPosition(int x, int y){
-        if (mapTileTypes[x, y] != null){
-            return false;
-        }
-        bool result = false;
-        for(int z = 0; z < 8; z++){
-            if(mapTileEdges[x + 1, y + 1, z]){
-                result = true;
-            }
-        }
-        return result;
-    }
-
     void GenerateTileEdges(int x, int y){
         string currentTileType =  mapTileTypes[x, y];
         bool emptyN = y >= maxSize - 1|| mapTileTypes[x, y + 1] != currentTileType;
@@ -181,9 +164,55 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    public string GetMapTileType(int x, int y){
+        return mapTileTypes[x, y];
+    }
+
+    private Vector4 GetEdgeQuadrant(int x, int y, int z){
+        // returns {x: xMin, y: xMax, z: yMin, w: yMax] 
+        if (!mapTileEdges[x + 1, y + 1, z]){
+            return Vector4.zero;
+        }
+        switch(z){
+           // edges
+           case 0: return new Vector4(x, x + 1, y, y + (float) 0.5);
+           case 1: return new Vector4(x + (float) 0.5, x + 1, y, y + 1);
+           case 2: return new Vector4(x, x + 1, y + (float) 0.5, y + 1);
+           case 3: return new Vector4(x, x + (float) 0.5, y, y + 1);
+           // corners
+           case 4: return new Vector4(x + (float) 0.5, x + 1, y, y + (float) 0.5);
+           case 5: return new Vector4(x + (float) 0.5, x + 1, y + (float) 0.5, y + 1);
+           case 6: return new Vector4(x, x + (float) 0.5, y + (float) 0.5, y + 1);
+           case 7: return new Vector4(x, x + (float) 0.5, y, y + (float) 0.5);
+           default: return Vector4.zero;
+        }
+    }
+
+    public bool IsOverTileOrEdgeQuadrant(float x, float y){
+        int intX = (int) System.Math.Floor(x);
+        int intY = (int) System.Math.Floor(y);
+        if (mapTileTypes[intX, intY] != null){
+            return true;
+        }
+        for(int z = 0; z < 8; z++){
+            Vector4 quadrant = GetEdgeQuadrant(intX, intY, z);
+            if (quadrant == Vector4.zero){
+                continue;
+            }
+            if (x >= quadrant.x && x <= quadrant.y &&
+                y >= quadrant.z && y <= quadrant.w
+            ){
+                return true;
+            }
+
+        }
+        return false;
+    }
+
     // Update is called once per frame
     void Update()
     {
 
     }
+
 }

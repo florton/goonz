@@ -8,23 +8,14 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D player;
     public TileManager tileManager;
 
-    private float edgeTolerance = (float) -0; // must be > -1 
-    private float playerYOffset = (float) -0.3;
-
     // Start is called before the first frame update
     void Start(){
         player = GetComponent<Rigidbody2D>();
     }
 
-    int CalculateNextIntPositionForAxis(float change, float playerPos, float offSet = 0){
-        return (int) System.Math.Floor(
-            (change > 0 ? change + offSet : change - offSet) + playerPos
-        ); 
-    }
-
-    bool tileAtPositionExists(int x, int y, bool includeEdge = false){
-        bool result = tileManager.GetMapTileType(x, y) != null;
-        return includeEdge ? tileManager.IsMapEdgeAtPosition(x,y) || result : result;
+    bool playerWillBeOverLand(float nextX, float nextY){
+        bool result = tileManager.IsOverTileOrEdgeQuadrant(nextX, nextY);
+        return result;
     }
 
     void MovePlayer(float playerX, float playerY, int playerIntX, int playerIntY){
@@ -33,17 +24,17 @@ public class PlayerMovement : MonoBehaviour
             Input.GetAxisRaw("Horizontal"), 
             Input.GetAxisRaw("Vertical")
         );
-        // keep player within map edges
-        int nextIntX = CalculateNextIntPositionForAxis(change.x, playerX, edgeTolerance);
-        int nextIntY = CalculateNextIntPositionForAxis(change.y > 0 ? change.y + playerYOffset : change.y, playerY, edgeTolerance);
-        bool canMoveForwardX = tileAtPositionExists(nextIntX, playerIntY, true);
-        bool canMoveForwardY = tileAtPositionExists(playerIntX, nextIntY, true);
-        // move player
         if (change != Vector3.zero) {
+            // keep player within map edges
+            float nextX = playerX + (change.x * speed * Time.deltaTime);
+            float nextY = playerY + (change.y * speed * Time.deltaTime);
+            bool canMoveForwardX = playerWillBeOverLand(nextX, playerY);
+            bool canMoveForwardY = playerWillBeOverLand(playerX, nextY);
+            // move player
             player.MovePosition(
                 new Vector3(playerX , playerY, 0) +
-                new Vector3(canMoveForwardX ? change.x : 0, canMoveForwardY ? change.y : 0, 0) * 
-                speed * Time.deltaTime
+                (new Vector3(canMoveForwardX ? change.x : 0, canMoveForwardY ? change.y : 0, 0) * 
+                speed * Time.deltaTime)
             );
         }
     }
