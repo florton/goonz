@@ -6,51 +6,65 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed;
     private Rigidbody2D player;
-    private Vector3 change;
     public TileManager tileManager;
 
-    //private int prevPlayerIntX;
-    //private int prevPlayerIntY;
+    private float edgeTolerance = (float) -0; // must be > -1 
+    private float playerYOffset = (float) -0.3;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
         player = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        // move character
-        change = Vector3.zero;
-        change.x = Input.GetAxisRaw("Horizontal");
-        change.y = Input.GetAxisRaw("Vertical");
-        int playerIntX = System.Convert.ToInt32(transform.position.x);
-        int playerIntY = System.Convert.ToInt32(transform.position.y);
-        if (change != Vector3.zero) {
-            MoveCharacter();
-        }
-        // place "dirt" tile with space
-        if(Input.GetKey(KeyCode.Space)){
-            //if(playerIntX != prevPlayerIntX || playerIntY != prevPlayerIntY){
-                // RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.back);
-                string currentTileType = tileManager.GetMapTileType(playerIntX, playerIntY);
-                if(currentTileType != null){
-                    tileManager.SetMapTileType(playerIntX,playerIntY,"grass");
-                } else {
-                    tileManager.CreateMapTile(playerIntX,playerIntY,"grass", "full");
-                }
-            //}
-        }
-
-        //prevPlayerIntX = System.Convert.ToInt32(transform.position.x);
-        //prevPlayerIntY = System.Convert.ToInt32(transform.position.y);
+    int CalculateNextIntPositionForAxis(float change, float playerPos, float offSet = 0){
+        return (int) System.Math.Floor(
+            (change > 0 ? change + offSet : change - offSet) + playerPos
+        ); 
     }
 
-    void MoveCharacter() 
-    {
-        player.MovePosition(
-            transform.position + change * speed * Time.deltaTime
+    bool tileAtPositionExists(int x, int y, bool includeEdge = false){
+        bool result = tileManager.GetMapTileType(x, y) != null;
+        return includeEdge ? tileManager.IsMapEdgeAtPosition(x,y) || result : result;
+    }
+
+    void MovePlayer(float playerX, float playerY, int playerIntX, int playerIntY){
+        // get player position & movement info
+        Vector3 change = new Vector3(
+            Input.GetAxisRaw("Horizontal"), 
+            Input.GetAxisRaw("Vertical")
         );
+        // keep player within map edges
+        int nextIntX = CalculateNextIntPositionForAxis(change.x, playerX, edgeTolerance);
+        int nextIntY = CalculateNextIntPositionForAxis(change.y > 0 ? change.y + playerYOffset : change.y, playerY, edgeTolerance);
+        bool canMoveForwardX = tileAtPositionExists(nextIntX, playerIntY, true);
+        bool canMoveForwardY = tileAtPositionExists(playerIntX, nextIntY, true);
+        // move player
+        if (change != Vector3.zero) {
+            player.MovePosition(
+                new Vector3(playerX , playerY, 0) +
+                new Vector3(canMoveForwardX ? change.x : 0, canMoveForwardY ? change.y : 0, 0) * 
+                speed * Time.deltaTime
+            );
+        }
+    }
+
+    // Update is called once per frame
+    void Update(){
+        float playerX = transform.position.x;
+        float playerY = transform.position.y;
+        int playerIntX = (int) System.Math.Floor(playerX);
+        int playerIntY = (int) System.Math.Floor(playerY);
+        MovePlayer(playerX, playerY, playerIntX, playerIntY);
+
+        // place "dirt" tile with space
+        string currentTileType = tileManager.GetMapTileType(playerIntX, playerIntY);
+        if(Input.GetKey(KeyCode.Space)){
+            // RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.back);
+            if(currentTileType != null){
+                tileManager.SetMapTileType(playerIntX,playerIntY,"grass");
+            } else {
+                tileManager.CreateMapTile(playerIntX,playerIntY,"grass", "full");
+            }
+        }
     }
 }

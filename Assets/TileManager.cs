@@ -97,6 +97,19 @@ public class TileManager : MonoBehaviour
         return mapTileTypes[x, y];
     }
 
+    public bool IsMapEdgeAtPosition(int x, int y){
+        if (mapTileTypes[x, y] != null){
+            return false;
+        }
+        bool result = false;
+        for(int z = 0; z < 8; z++){
+            if(mapTileEdges[x + 1, y + 1, z]){
+                result = true;
+            }
+        }
+        return result;
+    }
+
     void GenerateTileEdges(int x, int y){
         string currentTileType =  mapTileTypes[x, y];
         bool emptyN = y >= maxSize - 1|| mapTileTypes[x, y + 1] != currentTileType;
