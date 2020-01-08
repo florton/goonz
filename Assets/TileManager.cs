@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class TileManager : MonoBehaviour
 {   
+    public string spriteSheetName;
     public Material spriteMaterial;
 
     static public int mapSize = 10;
@@ -48,14 +49,15 @@ public class TileManager : MonoBehaviour
         int edgeIndex = System.Convert.ToInt32(rotation.z / 90);
         edgeIndex = position == "corner" ? edgeIndex + 4 : edgeIndex;
         GameObject edgeTile = mapTileEdges[x + 1, y + 1, edgeIndex];
-        if (!edgeTile || !edgeTile.GetComponent<SpriteRenderer>()){
+        // if edge already exists
+        if (edgeTile && edgeTile.GetComponent<SpriteRenderer>()){
+            edgeTile.GetComponent<SpriteRenderer>().sprite = GetRandomSpriteOfTypeAndPosition(type, position);
+        } else {
             edgeTile = CreateTile(x, y, type, position);
             edgeTile.layer = 17; //map edge layer
             edgeTile.transform.Rotate(rotation);
-        } else {
-            edgeTile.GetComponent<SpriteRenderer>().sprite = GetRandomSpriteOfTypeAndPosition(type, position);
         } 
-        // lower previous edge tiles z indexes by one to maintain sorting order
+        // lower previous edge tiles zs by one to maintain sorting order
         for (int z = 0; z < 8; z++){
             GameObject previousEdgeTile = mapTileEdges[x + 1, y + 1, z];
             if(previousEdgeTile){
@@ -127,8 +129,8 @@ public class TileManager : MonoBehaviour
         grid = GetComponent<Grid>();
 
         // load sprites into dictionary by type and position
-        // each ground type has 15 total sprites on the spritesheet 
-        Sprite[] groundSprites = Resources.LoadAll<Sprite>("Sprites/Ground");
+        // each ground type has 15 total sprites on the spriteSheet 
+        Sprite[] groundSprites = Resources.LoadAll<Sprite>("Sprites/" + spriteSheetName);
         string[] groundTypeNames = new string[] {"grass", "sand", "dirt"};
         for (int x = 0; x < groundTypeNames.Length; x++){
             groundTypes.Add(groundTypeNames[x], new Dictionary<string, Sprite[]>());

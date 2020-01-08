@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 1357930019}
   - component: {fileID: 1357930021}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Map Tiles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -274,6 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e6eb9dcad7c44740b2355c0cc742c98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spriteSheetName: Ground3
   spriteMaterial: {fileID: 2100000, guid: 981d59708152fe34e88404dc673b068c, type: 2}
 --- !u!1 &1608078008
 GameObject:
@@ -391,7 +392,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -721083133
-  m_SortingLayer: -1
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 0.1981132, g: 0.18970273, b: 0.18970273, a: 1}
