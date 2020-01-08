@@ -8,9 +8,12 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D player;
     public TileManager tileManager;
 
+    private string groundTypeSelected;
+
     // Start is called before the first frame update
     void Start(){
         player = GetComponent<Rigidbody2D>();
+        groundTypeSelected = tileManager.groundTypeNames[0];
     }
 
     bool playerWillBeOverLand(float nextX, float nextY){
@@ -47,14 +50,25 @@ public class PlayerMovement : MonoBehaviour
         int playerIntY = (int) System.Math.Floor(playerY);
         MovePlayer(playerX, playerY, playerIntX, playerIntY);
 
+        //set ground type to place
+        if(Input.GetKeyDown("1")){
+            groundTypeSelected = tileManager.groundTypeNames[0];
+        }        
+        if(Input.GetKeyDown("2")){
+            groundTypeSelected = tileManager.groundTypeNames[1];
+        }        
+        if(Input.GetKeyDown("3")){
+            groundTypeSelected = tileManager.groundTypeNames[2];
+        }
+
         // place "dirt" tile with space
         string currentTileType = tileManager.GetMapTileType(playerIntX, playerIntY);
         if(Input.GetKey(KeyCode.Space)){
             // RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.back);
             if(currentTileType != null){
-                tileManager.SetMapTileType(playerIntX,playerIntY,"grass");
+                tileManager.SetMapTileType(playerIntX,playerIntY, groundTypeSelected);
             } else {
-                tileManager.CreateMapTile(playerIntX,playerIntY,"grass", "full");
+                tileManager.CreateMapTile(playerIntX,playerIntY, groundTypeSelected , "full");
             }
         }
     }
