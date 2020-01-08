@@ -118,35 +118,14 @@ public class TileManager : MonoBehaviour
 
     void GenerateTileEdges(int x, int y){
         string currentTileType =  mapTileTypes[x, y];
-        bool emptyN = mapTileTypes[x, y + 1] != currentTileType;
-        bool emptyE = mapTileTypes[x + 1 , y] != currentTileType;
-        bool emptyS = mapTileTypes[x , y - 1] != currentTileType;
-        bool emptyW = mapTileTypes[x - 1 , y] != currentTileType;
-        // check 4 edges for same type
-        //if(emptyW){
-            CreateOrSetEdgeTile(x - 1, y, currentTileType, "edge", new Vector3(0, 0, 90));
-        //}
-        //if(emptyE){
-            CreateOrSetEdgeTile(x + 1, y, currentTileType, "edge", new Vector3(0, 0, 270));
-        //}
-        //if(emptyS){
-            CreateOrSetEdgeTile(x, y - 1, currentTileType, "edge", new Vector3(0, 0, 180));
-        //}
-        //if(emptyN){
-            CreateOrSetEdgeTile(x, y + 1, currentTileType, "edge", new Vector3(0, 0, 0));
-        //}
-        //if(emptyN || emptyE){
-            CreateOrSetEdgeTile(x + 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 270));
-        //}
-        //if(emptyE || emptyS){
-            CreateOrSetEdgeTile(x + 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 180));
-        //}
-        //if(emptyS || emptyW){
-            CreateOrSetEdgeTile(x - 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 90));
-        //}
-        //if(emptyW || emptyN){
-            CreateOrSetEdgeTile(x - 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 0));
-        //}
+        CreateOrSetEdgeTile(x - 1, y, currentTileType, "edge", new Vector3(0, 0, 90));
+        CreateOrSetEdgeTile(x + 1, y, currentTileType, "edge", new Vector3(0, 0, 270));
+        CreateOrSetEdgeTile(x, y - 1, currentTileType, "edge", new Vector3(0, 0, 180));
+        CreateOrSetEdgeTile(x, y + 1, currentTileType, "edge", new Vector3(0, 0, 0));
+        CreateOrSetEdgeTile(x + 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 270));
+        CreateOrSetEdgeTile(x + 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 180));
+        CreateOrSetEdgeTile(x - 1, y - 1, currentTileType, "corner", new Vector3(0, 0, 90));
+        CreateOrSetEdgeTile(x - 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 0));
     }
 
     void indexSpriteSheet(){
