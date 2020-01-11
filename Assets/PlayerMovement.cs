@@ -60,6 +60,9 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetKeyDown("3")){
             groundTypeSelected = tileManager.groundTypeNames[2];
         }
+        if(Input.GetKeyDown("4")){
+            groundTypeSelected = tileManager.groundTypeNames[3];
+        }
 
         // place "dirt" tile with space
         string currentTileType = tileManager.GetMapTileType(playerIntX, playerIntY);

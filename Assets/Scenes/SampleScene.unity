@@ -261,8 +261,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e6eb9dcad7c44740b2355c0cc742c98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteSheetName: Ground3
+  spriteSheetName: Ground4
   spriteMaterial: {fileID: 2100000, guid: 981d59708152fe34e88404dc673b068c, type: 2}
+  groundTypeNames:
+  - grass
+  - sand
+  - dirt
+  - warp
 --- !u!1 &1608078008
 GameObject:
   m_ObjectHideFlags: 0

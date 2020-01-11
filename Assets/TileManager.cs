@@ -11,7 +11,7 @@ public class TileManager : MonoBehaviour
     static public int startingMapSize = 10;
     static public int maxSize = 100;
     static public string startingTileType = "sand";
-    public string[] groundTypeNames = new string[] {"grass", "sand", "dirt"};
+    public string[] groundTypeNames = new string[] {"grass", "sand", "dirt", "warp"};
     private GameObject[,] mapTiles = new GameObject[maxSize, maxSize];
     private string[,] mapTileTypes = new string[maxSize, maxSize];
     private GameObject[, ,] mapTileEdges = new GameObject[maxSize, maxSize, 8];
@@ -67,6 +67,7 @@ public class TileManager : MonoBehaviour
         SpriteRenderer renderer = edgeTile  ? edgeTile.GetComponent<SpriteRenderer>() : null;
         // dont make edges of same type and postion
         if(mapTileEdgeTypes[x, y, edgeIndex] == type){
+            renderer.sortingOrder = 10;
             return;
         }
         // if all edge tiles are same type as map tile clear edges
