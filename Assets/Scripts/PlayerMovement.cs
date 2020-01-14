@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start(){
         player = GetComponent<Rigidbody2D>();
-        groundTypeSelected = tileManager.groundTypeNames[0];
+        groundTypeSelected = tileManager.GetGroundTypes()[0];
     }
 
     bool playerWillBeOverLand(float nextX, float nextY){
@@ -34,10 +34,11 @@ public class PlayerMovement : MonoBehaviour
             bool canMoveForwardX = playerWillBeOverLand(nextX, playerY);
             bool canMoveForwardY = playerWillBeOverLand(playerX, nextY);
             // move player
+            Debug.Log(change);
             player.MovePosition(
                 new Vector3(playerX , playerY, 0) +
                 (new Vector3(canMoveForwardX ? change.x : 0, canMoveForwardY ? change.y : 0, 0) * 
-                speed * Time.deltaTime)
+                speed * Time.fixedDeltaTime)
             );
         }
     }
@@ -50,18 +51,13 @@ public class PlayerMovement : MonoBehaviour
         int playerIntY = (int) System.Math.Floor(playerY);
         MovePlayer(playerX, playerY, playerIntX, playerIntY);
 
-        //set ground type to place
-        if(Input.GetKeyDown("1")){
-            groundTypeSelected = tileManager.groundTypeNames[0];
-        }        
-        if(Input.GetKeyDown("2")){
-            groundTypeSelected = tileManager.groundTypeNames[1];
-        }        
-        if(Input.GetKeyDown("3")){
-            groundTypeSelected = tileManager.groundTypeNames[2];
-        }
-        if(Input.GetKeyDown("4")){
-            groundTypeSelected = tileManager.groundTypeNames[3];
+        string[] groundTypes = tileManager.GetGroundTypes();
+        for (int i = 1; i <= groundTypes.Length; i++)
+        {
+            if (Input.GetKeyDown(i.ToString()))
+            {
+                groundTypeSelected = tileManager.GetGroundTypes()[i];
+            }
         }
 
         // place "dirt" tile with space
