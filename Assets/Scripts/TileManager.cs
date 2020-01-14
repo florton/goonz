@@ -78,7 +78,7 @@ public class TileManager : MonoBehaviour
         edgeIndex = position == "corner" ? edgeIndex + 4 : edgeIndex;
         GameObject edgeTile = mapTileEdges[x, y, edgeIndex];
         SpriteRenderer renderer = edgeTile ? edgeTile.GetComponent<SpriteRenderer>() : null;
-        // dont make edges of same type and postion
+        // dont make edges of same type and postion, just bring to front
         if (mapTileEdgeTypes[x, y, edgeIndex] == type)
         {
             renderer.sortingOrder = 10;
@@ -98,6 +98,8 @@ public class TileManager : MonoBehaviour
         {
             // if edge z already exists
             renderer.sprite = GetRandomSpriteOfTypeAndPosition(type, position);
+            // set new edge tile sorting later
+            renderer.sortingOrder = 10;
         }
         else
         {
