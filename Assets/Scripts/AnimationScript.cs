@@ -33,10 +33,10 @@ public class AnimationScript : MonoBehaviour {
             if (loop) {
                 frame %= sprites.Length;
             }
-            //Max limit
-            if (frame >= sprites.Length) {
-                frame = sprites.Length - 1;
-            }
+        }
+        //Max limit
+        if (frame >= sprites.Length) {
+            frame = sprites.Length - 1;
         }
         //Animate sprite with selected frame
         spr.sprite = sprites[frame];
