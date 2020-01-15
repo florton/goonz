@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
-
 public class TileManager : MonoBehaviour
 {
     public Material spriteMaterial;
@@ -20,7 +19,6 @@ public class TileManager : MonoBehaviour
 
     private Vector2 lastSetTileCoords;
     private string lastSetTileType;
-
     Sprite GetRandomSpriteOfTypeAndPosition(string type, string position)
     {   
         int randSpriteIndex = UnityEngine.Random.Range(0, groundTypes[type][position].Count);

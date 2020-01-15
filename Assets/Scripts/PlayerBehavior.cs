@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class PlayerBehavior : MonoBehaviour
 {
     public float speed;
@@ -58,8 +57,9 @@ public class PlayerBehavior : MonoBehaviour
     void MovePlayer(float playerX, float playerY, int playerIntX, int playerIntY){
         // get player position & movement info
         Vector3 change = new Vector3(
-            Input.GetAxisRaw("Horizontal"), 
-            Input.GetAxisRaw("Vertical")
+            Input.GetKey("right") ? 1 : (Input.GetKey("left") ? -1 : 0),
+            Input.GetKey("up") ? 1 : (Input.GetKey("down") ? -1 : 0),
+            0
         );
         if (change != Vector3.zero) {
             // keep player within map edges
