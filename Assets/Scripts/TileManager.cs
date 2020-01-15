@@ -18,6 +18,9 @@ public class TileManager : MonoBehaviour
     private string[,,] mapTileEdgeTypes = new string[maxSize, maxSize, 8];
     private Dictionary<string, Dictionary<string, List<Sprite>>> groundTypes = new Dictionary<string, Dictionary<string, List<Sprite>>>();
 
+    private Vector2 lastSetTileCoords;
+    private string lastSetTileType;
+
     Sprite GetRandomSpriteOfTypeAndPosition(string type, string position)
     {   
         int randSpriteIndex = UnityEngine.Random.Range(0, groundTypes[type][position].Count);
@@ -71,6 +74,19 @@ public class TileManager : MonoBehaviour
         return allEdgesSameType && tileIsNotEmpty;
     }
 
+    void LowerSortOrderOfAllEdges(int x, int y) {
+        // lower previous edge zs sorting order by one 
+        for (int z = 0; z < 8; z++) {
+            GameObject previousEdgeTile = mapTileEdges[x, y, z];
+            if (previousEdgeTile) {
+                SpriteRenderer prevEdgeRenderer = previousEdgeTile.GetComponent<SpriteRenderer>();
+                if (prevEdgeRenderer.sortingOrder > 2) {
+                    prevEdgeRenderer.sortingOrder = prevEdgeRenderer.sortingOrder - 1;
+                }
+            }
+        }
+    }
+
     void CreateOrSetEdgeTile(int x, int y, string type, string position, Vector3 rotation)
     {
         // rotation z must be 0, 90, 180, or 270       
@@ -78,13 +94,7 @@ public class TileManager : MonoBehaviour
         edgeIndex = position == "corner" ? edgeIndex + 4 : edgeIndex;
         GameObject edgeTile = mapTileEdges[x, y, edgeIndex];
         SpriteRenderer renderer = edgeTile ? edgeTile.GetComponent<SpriteRenderer>() : null;
-        // dont make edges of same type and postion, just bring to front
-        if (mapTileEdgeTypes[x, y, edgeIndex] == type)
-        {
-            renderer.sortingOrder = 10;
-            return;
-        }
-        // if all edge tiles are same type as map tile clear edges
+        // if all edge tiles are same type as map tile under it clear edges
         if (AllEdgesAtPositionType(x, y, mapTileTypes[x, y]))
         {
             ClearEdgeTilesAtPosition(x, y);
@@ -92,6 +102,12 @@ public class TileManager : MonoBehaviour
             {
                 return;
             }
+        }
+        // dont make edges of same type and postion, just bring to front
+        if (mapTileEdgeTypes[x, y, edgeIndex] == type) {
+            LowerSortOrderOfAllEdges(x, y);
+            renderer.sortingOrder = 10;
+            return;
         }
         // create or set edge
         if (renderer)
@@ -111,19 +127,7 @@ public class TileManager : MonoBehaviour
             // set new edge tile sorting later
             renderer.sortingOrder = 10;
         }
-        // lower previous edge zs sorting order by one 
-        for (int z = 0; z < 8; z++)
-        {
-            GameObject previousEdgeTile = mapTileEdges[x, y, z];
-            if (previousEdgeTile)
-            {
-                SpriteRenderer prevEdgeRenderer = previousEdgeTile.GetComponent<SpriteRenderer>();
-                if (prevEdgeRenderer.sortingOrder > 2)
-                {
-                    prevEdgeRenderer.sortingOrder = prevEdgeRenderer.sortingOrder - 1;
-                }
-            }
-        }
+        LowerSortOrderOfAllEdges(x, y);
         mapTileEdgeTypes[x, y, edgeIndex] = type;
         mapTileEdges[x, y, edgeIndex] = edgeTile;
     }
@@ -135,14 +139,19 @@ public class TileManager : MonoBehaviour
             GameObject edgeTile = mapTileEdges[x, y, z];
             if (edgeTile)
             {
-                edgeTile.GetComponent<SpriteRenderer>().sprite = null;
+                //edgeTile.GetComponent<SpriteRenderer>().sprite = null;
                 mapTileEdgeTypes[x, y, z] = null;
+                mapTileEdges[x, y, z] = null;
+                Destroy(edgeTile);
             }
         }
     }
 
     public void SetMapTileType(int x, int y, string type)
     {
+        if(x == lastSetTileCoords.x && y == lastSetTileCoords.y && type == lastSetTileType) {
+            return;
+        }
         if (mapTileTypes[x, y] != type)
         {
             mapTileTypes[x, y] = type;
@@ -156,6 +165,8 @@ public class TileManager : MonoBehaviour
             ClearEdgeTilesAtPosition(x, y);
             GenerateTileEdges(x, y);
         }
+        lastSetTileCoords = new Vector2(x, y);
+        lastSetTileType = type;
     }
 
     void GenerateTileEdges(int x, int y)
