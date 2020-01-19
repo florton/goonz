@@ -89,7 +89,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             if (Input.GetKeyDown(i.ToString()))
             {
-                groundTypeSelected = tileManager.GetGroundTypes()[i];
+                groundTypeSelected = tileManager.GetGroundTypes()[i - 1];
             }
         }
 
