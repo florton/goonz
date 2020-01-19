@@ -104,7 +104,7 @@ public class TileManager : MonoBehaviour
         // dont make edges of same type and postion, just bring to front
         if (mapTileEdgeTypes[x, y, edgeIndex] == type) {
             LowerSortOrderOfAllEdges(x, y);
-            renderer.sortingOrder = 10;
+            renderer.sortingOrder = 20;
             return;
         }
         // create or set edge
@@ -123,7 +123,7 @@ public class TileManager : MonoBehaviour
         }
         LowerSortOrderOfAllEdges(x, y);
         // set new edge tile sorting later
-        renderer.sortingOrder = 10;
+        renderer.sortingOrder = 20;
         mapTileEdgeTypes[x, y, edgeIndex] = type;
         mapTileEdges[x, y, edgeIndex] = edgeTile;
     }
