@@ -31,7 +31,7 @@ public class TileManager : MonoBehaviour
         // position either "full", "edge", or "corner"
         GameObject tile = new GameObject();
         tile.transform.position = new Vector3(x + (float)0.5, y + (float)0.5);
-        tile.transform.localScale = new Vector3((float)6.4, (float)6.4, 0);
+        tile.transform.localScale = new Vector3((float)6.5, (float)6.5, 0);
         tile.transform.parent = transform;
         SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
         renderer.material = spriteMaterial;
@@ -49,6 +49,7 @@ public class TileManager : MonoBehaviour
     public void CreateMapTile(int x, int y, string type, string position)
     {
         GameObject tile = CreateTile(x, y, type, position);
+        tile.name = "map tile";
         tile.GetComponent<SpriteRenderer>().sortingOrder = 1;
         tile.layer = 18; //map layer
         mapTiles[x, y] = tile;
@@ -57,7 +58,7 @@ public class TileManager : MonoBehaviour
         GenerateTileEdges(x, y);
     }
 
-    bool AllEdgesAtPositionType(int x, int y, string type)
+    bool AllEdgesSameTypeAsBase(int x, int y, string type)
     {
         bool allEdgesSameType = true;
         bool tileIsNotEmpty = mapTileTypes[x, y] != null;
@@ -93,12 +94,12 @@ public class TileManager : MonoBehaviour
         GameObject edgeTile = mapTileEdges[x, y, edgeIndex];
         SpriteRenderer renderer = edgeTile ? edgeTile.GetComponent<SpriteRenderer>() : null;
         // if all edge tiles are same type as map tile under it clear edges
-        if (AllEdgesAtPositionType(x, y, mapTileTypes[x, y]))
+        if (AllEdgesSameTypeAsBase(x, y, mapTileTypes[x, y]))
         {
             ClearEdgeTilesAtPosition(x, y);
             if (mapTileTypes[x, y] == type)
             {
-                return;
+                 return;
             }
         }
         // dont make edges of same type and postion, just bring to front
@@ -117,6 +118,7 @@ public class TileManager : MonoBehaviour
         {
             // new edge z
             edgeTile = CreateTile(x, y, type, position);
+            edgeTile.name = "tile edge";
             edgeTile.layer = 17; //map edge layer
             edgeTile.transform.Rotate(rotation);
             renderer = edgeTile.GetComponent<SpriteRenderer>();
@@ -135,10 +137,10 @@ public class TileManager : MonoBehaviour
             GameObject edgeTile = mapTileEdges[x, y, z];
             if (edgeTile)
             {
-                //edgeTile.GetComponent<SpriteRenderer>().sprite = null;
+                edgeTile.GetComponent<SpriteRenderer>().sprite = null;
                 mapTileEdgeTypes[x, y, z] = null;
                 mapTileEdges[x, y, z] = null;
-                Destroy(edgeTile);
+                // Destroy(edgeTile);
             }
         }
     }
@@ -153,14 +155,9 @@ public class TileManager : MonoBehaviour
             mapTileTypes[x, y] = type;
             int randSpriteIndex = UnityEngine.Random.Range(0, groundTypes[type]["full"].Count);
             mapTiles[x, y].GetComponent<SpriteRenderer>().sprite = groundTypes[type]["full"][randSpriteIndex];
-            ClearEdgeTilesAtPosition(x, y);
-            GenerateTileEdges(x, y);
         }
-        else
-        {
-            ClearEdgeTilesAtPosition(x, y);
-            GenerateTileEdges(x, y);
-        }
+        ClearEdgeTilesAtPosition(x, y);
+        GenerateTileEdges(x, y);
         lastSetTileCoords = new Vector2(x, y);
         lastSetTileType = type;
     }
