@@ -31,7 +31,7 @@ public class TileManager : MonoBehaviour
         // position either "full", "edge", or "corner"
         GameObject tile = new GameObject();
         tile.transform.position = new Vector3(x + (float)0.5, y + (float)0.5);
-        tile.transform.localScale = new Vector3((float)6.5, (float)6.5, 0);
+        tile.transform.localScale = new Vector3((float)6.5, (float)6.5, 1);
         tile.transform.parent = transform;
         SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
         renderer.material = spriteMaterial;
