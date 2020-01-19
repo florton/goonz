@@ -112,8 +112,6 @@ public class TileManager : MonoBehaviour
         {
             // if edge z already exists
             renderer.sprite = GetRandomSpriteOfTypeAndPosition(type, position);
-            // set new edge tile sorting later
-            renderer.sortingOrder = 10;
         }
         else
         {
@@ -122,10 +120,10 @@ public class TileManager : MonoBehaviour
             edgeTile.layer = 17; //map edge layer
             edgeTile.transform.Rotate(rotation);
             renderer = edgeTile.GetComponent<SpriteRenderer>();
-            // set new edge tile sorting later
-            renderer.sortingOrder = 10;
         }
         LowerSortOrderOfAllEdges(x, y);
+        // set new edge tile sorting later
+        renderer.sortingOrder = 10;
         mapTileEdgeTypes[x, y, edgeIndex] = type;
         mapTileEdges[x, y, edgeIndex] = edgeTile;
     }
