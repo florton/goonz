@@ -10,11 +10,12 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
-      
-    void Update () 
+
+    void Update ()
     {
-        transform.position = new Vector3 (player.position.x + offset.x, player.position.y + offset.y, offset.z); // Camera follows the player with specified offset position
+        // Camera follows the player with specified offset position
+        transform.position = new Vector3 (player.position.x + offset.x, player.position.y + offset.y, offset.z);
     }
 }

@@ -22,6 +22,8 @@
 
 # Visual Studio cache directory
 .vs/
+# VS Code junk
+.vscode/
 
 # Gradle cache directory
 .gradle/
@@ -59,3 +61,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Ignore the trash directory
+# I am the trash man!
+trash/

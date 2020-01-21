@@ -11,7 +11,8 @@ public class AnimationScript : MonoBehaviour {
     private float deltaTime = 0;
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         spr = GetComponent<SpriteRenderer>();
     }
 
@@ -24,18 +25,21 @@ public class AnimationScript : MonoBehaviour {
         //Keep track of the time that has passed
         deltaTime += Time.deltaTime;
 
-        /*Loop to allow for multiple sprite frame 
+        /*Loop to allow for multiple sprite frame
          jumps in a single update call if needed
          Useful if frameSeconds is very small*/
-        while (deltaTime >= frameSeconds) {
+        while (deltaTime >= frameSeconds)
+        {
             deltaTime -= frameSeconds;
             frame++;
-            if (loop) {
+            if (loop)
+            {
                 frame %= sprites.Length;
             }
         }
         //Max limit
-        if (frame >= sprites.Length) {
+        if (frame >= sprites.Length)
+        {
             frame = sprites.Length - 1;
         }
         //Animate sprite with selected frame

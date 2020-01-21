@@ -20,7 +20,7 @@ public class TileManager : MonoBehaviour
     private Vector2 lastSetTileCoords;
     private string lastSetTileType;
     Sprite GetRandomSpriteOfTypeAndPosition(string type, string position)
-    {   
+    {
         int randSpriteIndex = UnityEngine.Random.Range(0, groundTypes[type][position].Count);
         Sprite sprite = groundTypes[type][position][randSpriteIndex];
         return sprite;
@@ -73,8 +73,9 @@ public class TileManager : MonoBehaviour
         return allEdgesSameType && tileIsNotEmpty;
     }
 
-    void LowerSortOrderOfAllEdges(int x, int y) {
-        // lower previous edge zs sorting order by one 
+    void LowerSortOrderOfAllEdges(int x, int y)
+    {
+        // lower previous edge zs sorting order by one
         for (int z = 0; z < 8; z++) {
             GameObject previousEdgeTile = mapTileEdges[x, y, z];
             if (previousEdgeTile) {
@@ -88,7 +89,7 @@ public class TileManager : MonoBehaviour
 
     void CreateOrSetEdgeTile(int x, int y, string type, string position, Vector3 rotation)
     {
-        // rotation z must be 0, 90, 180, or 270       
+        // rotation z must be 0, 90, 180, or 270
         int edgeIndex = System.Convert.ToInt32(rotation.z / 90);
         edgeIndex = position == "corner" ? edgeIndex + 4 : edgeIndex;
         GameObject edgeTile = mapTileEdges[x, y, edgeIndex];
@@ -147,7 +148,8 @@ public class TileManager : MonoBehaviour
 
     public void SetMapTileType(int x, int y, string type)
     {
-        if(x == lastSetTileCoords.x && y == lastSetTileCoords.y && type == lastSetTileType) {
+        if(x == lastSetTileCoords.x && y == lastSetTileCoords.y && type == lastSetTileType)
+        {
             return;
         }
         if (mapTileTypes[x, y] != type)
@@ -178,7 +180,7 @@ public class TileManager : MonoBehaviour
     void indexSpriteSheet()
     {
         // load sprites into dictionary by type and position
-        // each ground type has 15 total sprites on the spriteSheet 
+        // each ground type has 15 total sprites on the spriteSheet
         Sprite[] groundSprites = Resources.LoadAll<Sprite>("Sprites/Terrain");
         foreach (var sprite in groundSprites)
         {
@@ -220,7 +222,7 @@ public class TileManager : MonoBehaviour
 
     private Vector4 GetEdgeQuadrant(int x, int y, int z)
     {
-        // returns {x: xMin, y: xMax, z: yMin, w: yMax] 
+        // returns {x: xMin, y: xMax, z: yMin, w: yMax]
         if (!mapTileEdges[x, y, z])
         {
             return Vector4.zero;

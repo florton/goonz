@@ -11,7 +11,7 @@ public class PlayerBehavior : MonoBehaviour
     private string groundTypeSelected;
     private Vector3 playerDirection = Vector3.zero;
     private Vector3 prevPlayerDirection = Vector3.zero;
-    
+
     private Dictionary<string, Sprite[]> allPlayerSprites = new Dictionary<string, Sprite[]>();
     private Sprite[] currentPlayerSprite;
     private Sprite[] cursorSprite;
@@ -19,8 +19,8 @@ public class PlayerBehavior : MonoBehaviour
 
     private GameObject[,] OverlayTiles;
 
-    private float prevPlayerX; 
-    private float prevPlayerY; 
+    private float prevPlayerX;
+    private float prevPlayerY;
     private bool buildMode = false;
     public Vector3 change;
 
@@ -32,7 +32,8 @@ public class PlayerBehavior : MonoBehaviour
         SetPlayerSprite();
     }
 
-    void IndexPlayerSprites() {
+    void IndexPlayerSprites()
+    {
         allPlayerSprites["idle"] = Resources.LoadAll<Sprite>("Sprites/Player/player_idle");
         allPlayerSprites["down"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_down");
         allPlayerSprites["up"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_up");
