@@ -63,8 +63,10 @@ public class PlayerBehavior : MonoBehaviour
         );
         if (change != Vector3.zero) {
             // keep player within map edges
-            float nextX = playerX + (change.x * speed * Time.deltaTime);
-            float nextY = playerY + (change.y * speed * Time.deltaTime);
+            // and prevent sticking to edges
+            float safetyOffset = (float) 5;
+            float nextX = playerX + (change.x * speed * Time.deltaTime * safetyOffset);
+            float nextY = playerY + (change.y * speed * Time.deltaTime * safetyOffset);
             bool canMoveForwardX = tileManager.IsOverTileOrEdgeQuadrant(nextX, playerY);
             bool canMoveForwardY = tileManager.IsOverTileOrEdgeQuadrant(playerX, nextY);
             // move player
