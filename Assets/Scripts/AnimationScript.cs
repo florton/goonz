@@ -17,7 +17,7 @@ public class AnimationScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        sprites = playerBehavior.getCurrentPlayerSprites();
+        sprites = playerBehavior.getCurrentPlayerSprite();
         if (sprites == null) {
             return;
         }

@@ -10,9 +10,14 @@ public class PlayerBehavior : MonoBehaviour
     private string groundTypeSelected;
     private Vector3 playerDirection = Vector3.zero;
     private Vector3 prevPlayerDirection = Vector3.zero;
-
+    
     private Dictionary<string, Sprite[]> allPlayerSprites = new Dictionary<string, Sprite[]>();
-    private Sprite[] currentPlayerSprites;
+    private Sprite[] currentPlayerSprite;
+    private Sprite[] cursorSprite;
+
+    // build mode
+    private bool buildMode = false;
+    private Vector3 hiddenPlayerPosition;
 
     // Start is called before the first frame update
     void Start(){
@@ -22,39 +27,71 @@ public class PlayerBehavior : MonoBehaviour
         SetPlayerSprite();
     }
 
+    void ToggleBuildMode() {
+        if(buildMode == false) {
+            // enter build mode
+            // save player position
+            hiddenPlayerPosition = transform.position;
+        }
+        else {
+            // back to play mode
+            // put player back in position
+            player.MovePosition(hiddenPlayerPosition);
+        }
+        buildMode = !buildMode;
+    }
+
     void IndexPlayerSprites() {
         allPlayerSprites["idle"] = Resources.LoadAll<Sprite>("Sprites/Player/player_idle");
         allPlayerSprites["down"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_down");
         allPlayerSprites["up"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_up");
         allPlayerSprites["left"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_left");
         allPlayerSprites["right"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_right");
+        cursorSprite = Resources.LoadAll<Sprite>("Sprites/Player/cursor_white");
     }
 
     void SetPlayerSprite() {
         if (playerDirection == prevPlayerDirection) {
-            if (currentPlayerSprites != null) {
+            if (currentPlayerSprite != null) {
                 return;
             } else {
-                currentPlayerSprites = allPlayerSprites["idle"];
+                currentPlayerSprite = allPlayerSprites["idle"];
             }
         } else if(playerDirection.x > 0) {
-            currentPlayerSprites = allPlayerSprites["right"];
+            currentPlayerSprite = allPlayerSprites["right"];
         } else if(playerDirection.x < 0) {
-            currentPlayerSprites = allPlayerSprites["left"];
+            currentPlayerSprite = allPlayerSprites["left"];
         } else if(playerDirection.y > 0) {
-            currentPlayerSprites = allPlayerSprites["up"];
+            currentPlayerSprite = allPlayerSprites["up"];
         } else if(playerDirection.y < 0) {
-            currentPlayerSprites = allPlayerSprites["down"];
+            currentPlayerSprite = allPlayerSprites["down"];
         } else {
-            currentPlayerSprites = allPlayerSprites["idle"];
+            currentPlayerSprite = allPlayerSprites["idle"];
         }
     }
 
-    public Sprite[] getCurrentPlayerSprites() {
-        return currentPlayerSprites;
+    public Sprite[] getCurrentPlayerSprite() {
+        if (!buildMode) {
+            return currentPlayerSprite;
+        }else {
+            return cursorSprite;
+        }
     }
 
-    void MovePlayer(float playerX, float playerY, int playerIntX, int playerIntY){
+    void MoveCursor(float playerX, float playerY) {
+        // get player position & movement info
+        Vector3 change = new Vector3(
+            Input.GetKey("right") ? 1 : (Input.GetKey("left") ? -1 : 0),
+            Input.GetKey("up") ? 1 : (Input.GetKey("down") ? -1 : 0),
+            0
+        );
+        // todo: add constrainment to build cursor movement
+        if (change != Vector3.zero) {
+            player.MovePosition(new Vector3(playerX, playerY, 0) + change * speed * Time.fixedDeltaTime);
+        }
+    }
+
+    void MovePlayer(float playerX, float playerY){
         // get player position & movement info
         Vector3 change = new Vector3(
             Input.GetKey("right") ? 1 : (Input.GetKey("left") ? -1 : 0),
@@ -82,27 +119,47 @@ public class PlayerBehavior : MonoBehaviour
     void Update(){
         float playerX = transform.position.x;
         float playerY = transform.position.y;
-        int playerIntX = (int) System.Math.Floor(playerX);
-        int playerIntY = (int) System.Math.Floor(playerY);
-        MovePlayer(playerX, playerY, playerIntX, playerIntY);
+        int playerIntX = (int)System.Math.Floor(playerX);
+        int playerIntY = (int)System.Math.Floor(playerY);
 
-        string[] groundTypes = tileManager.GetGroundTypes();
-        for (int i = 1; i <= groundTypes.Length; i++)
-        {
-            if (Input.GetKeyDown(i.ToString()))
-            {
-                groundTypeSelected = tileManager.GetGroundTypes()[i - 1];
+        if (buildMode) {
+            // build mode cursor controls
+            string[] groundTypes = tileManager.GetGroundTypes();
+            for (int i = 1; i <= groundTypes.Length; i++) {
+                if (Input.GetKeyDown(i.ToString())) {
+                    groundTypeSelected = tileManager.GetGroundTypes()[i - 1];
+                }
             }
+            if (Input.GetKey(KeyCode.Space)) {
+                // place selected tile type with space
+                string currentTileType = tileManager.GetMapTileType(playerIntX, playerIntY);
+                if (currentTileType != null) {
+                    tileManager.SetMapTileType(playerIntX, playerIntY, groundTypeSelected);
+                }
+                else {
+                    tileManager.CreateMapTile(playerIntX, playerIntY, groundTypeSelected, "full");
+                }
+            }
+            MoveCursor(playerX, playerY);
+        }
+        else {
+            // player controls
+            MovePlayer(playerX, playerY);
+        }
+        // toggle build mode
+        if (Input.GetKeyDown(KeyCode.B)) {
+            ToggleBuildMode();
         }
 
-        // place selected tile type with space
-        string currentTileType = tileManager.GetMapTileType(playerIntX, playerIntY);
-        if(Input.GetKey(KeyCode.Space)){
-            if(currentTileType != null){
-                tileManager.SetMapTileType(playerIntX,playerIntY, groundTypeSelected);
-            } else {
-                tileManager.CreateMapTile(playerIntX,playerIntY, groundTypeSelected , "full");
-            }
-        }
     }
 }
+
+/*
+if(Input.GetKey(KeyCode.Space)){
+    if(currentTileType != null){
+        tileManager.SetMapTileType(playerIntX, playerIntY, groundTypeSelected);
+    } else {
+        tileManager.CreateMapTile(playerIntX, playerIntY, groundTypeSelected, "full");
+    }
+}
+*/
