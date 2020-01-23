@@ -6,6 +6,8 @@ public class PlayerBehavior : MonoBehaviour
     public float speed;
     private Rigidbody2D player;
     public TileManager tileManager;
+    public Material spriteMaterial;
+    public GameObject buildModeOverlay;
 
     private string groundTypeSelected;
     private Vector3 playerDirection = Vector3.zero;
@@ -14,29 +16,37 @@ public class PlayerBehavior : MonoBehaviour
     private Dictionary<string, Sprite[]> allPlayerSprites = new Dictionary<string, Sprite[]>();
     private Sprite[] currentPlayerSprite;
     private Sprite[] cursorSprite;
+    private Sprite tileOverlaySprite;
+
+    private GameObject[,] OverlayTiles;
 
     // build mode
     private bool buildMode = false;
     private Vector3 hiddenPlayerPosition;
+    private int prevPlayerIntX;
+    private int prevPlayerIntY;
 
     // Start is called before the first frame update
     void Start(){
         player = GetComponent<Rigidbody2D>();
         groundTypeSelected = tileManager.GetGroundTypes()[0];
+        OverlayTiles = new GameObject[TileManager.maxSize, TileManager.maxSize];
         IndexPlayerSprites();
         SetPlayerSprite();
     }
 
-    void ToggleBuildMode() {
-        if(buildMode == false) {
+    void ToggleBuildMode(int playerIntX, int playerIntY) {
+        if (buildMode == false) {
             // enter build mode
             // save player position
             hiddenPlayerPosition = transform.position;
+            AddOverlayTile(playerIntX, playerIntY);
         }
         else {
             // back to play mode
             // put player back in position
             player.MovePosition(hiddenPlayerPosition);
+            RemoveOverlayTile(playerIntX, playerIntY);
         }
         buildMode = !buildMode;
     }
@@ -47,7 +57,31 @@ public class PlayerBehavior : MonoBehaviour
         allPlayerSprites["up"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_up");
         allPlayerSprites["left"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_left");
         allPlayerSprites["right"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_right");
-        cursorSprite = Resources.LoadAll<Sprite>("Sprites/Player/cursor_white");
+        cursorSprite = Resources.LoadAll<Sprite>("Sprites/BuildMode/cursor_white");
+        tileOverlaySprite = Resources.Load<Sprite>("Sprites/BuildMode/tile_overlay");
+    }
+
+    void AddOverlayTile(int x, int y) {
+        GameObject overlayTile = new GameObject();
+        overlayTile.name = "tile overlay";
+        overlayTile.transform.position = new Vector3(x + (float)0.5, y + (float)0.5);
+        overlayTile.transform.parent = buildModeOverlay.transform;
+        SpriteRenderer renderer = overlayTile.AddComponent<SpriteRenderer>();
+        renderer.material = spriteMaterial;
+        renderer.sprite = tileOverlaySprite;
+        renderer.sortingOrder = 100;
+        renderer.color = new Color(0, 255, 14, (float) 0.5);
+        OverlayTiles[x, y] = overlayTile;
+    }
+    void MoveOverlayTile(int prevX, int prevY, int newX, int newY) {
+        Debug.Log(new Vector4(prevX, prevY, newX, newY));
+        if (OverlayTiles[prevX, prevY] != null) {
+            RemoveOverlayTile(prevX, prevY);
+            AddOverlayTile(newX, newY);
+        }
+    }
+    void RemoveOverlayTile(int x, int y) {
+        Destroy(OverlayTiles[x, y]);
     }
 
     void SetPlayerSprite() {
@@ -78,7 +112,7 @@ public class PlayerBehavior : MonoBehaviour
         }
     }
 
-    void MoveCursor(float playerX, float playerY) {
+    void MoveCursor(float playerX, float playerY, int playerIntX, int playerIntY) {
         // get player position & movement info
         Vector3 change = new Vector3(
             Input.GetKey("right") ? 1 : (Input.GetKey("left") ? -1 : 0),
@@ -87,7 +121,10 @@ public class PlayerBehavior : MonoBehaviour
         );
         // todo: add constrainment to build cursor movement
         if (change != Vector3.zero) {
-            player.MovePosition(new Vector3(playerX, playerY, 0) + change * speed * Time.fixedDeltaTime);
+            player.MovePosition(new Vector3(playerX, playerY, 0) + change * speed  * Time.fixedDeltaTime);
+            if (OverlayTiles[playerIntX, playerIntY] == null) {
+
+            }
         }
     }
 
@@ -122,6 +159,11 @@ public class PlayerBehavior : MonoBehaviour
         int playerIntX = (int)System.Math.Floor(playerX);
         int playerIntY = (int)System.Math.Floor(playerY);
 
+        // toggle build mode
+        if (Input.GetKeyDown(KeyCode.B)) {
+            ToggleBuildMode(playerIntX, playerIntY);
+            return;
+        }
         if (buildMode) {
             // build mode cursor controls
             string[] groundTypes = tileManager.GetGroundTypes();
@@ -140,26 +182,16 @@ public class PlayerBehavior : MonoBehaviour
                     tileManager.CreateMapTile(playerIntX, playerIntY, groundTypeSelected, "full");
                 }
             }
-            MoveCursor(playerX, playerY);
+            if(playerIntX != prevPlayerIntX || playerIntY != prevPlayerIntY) {
+                MoveOverlayTile(prevPlayerIntX, prevPlayerIntY, playerIntX, playerIntY);
+            }
+            MoveCursor(playerX, playerY, playerIntX, playerIntY);
         }
         else {
             // player controls
             MovePlayer(playerX, playerY);
         }
-        // toggle build mode
-        if (Input.GetKeyDown(KeyCode.B)) {
-            ToggleBuildMode();
-        }
-
+        prevPlayerIntX = playerIntX;
+        prevPlayerIntY = playerIntY;
     }
 }
-
-/*
-if(Input.GetKey(KeyCode.Space)){
-    if(currentTileType != null){
-        tileManager.SetMapTileType(playerIntX, playerIntY, groundTypeSelected);
-    } else {
-        tileManager.CreateMapTile(playerIntX, playerIntY, groundTypeSelected, "full");
-    }
-}
-*/

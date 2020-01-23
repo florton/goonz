@@ -20,6 +20,24 @@ TextureImporter:
   - first:
       213: 2473694720439497014
     second: cursor_white_5
+  - first:
+      213: 2376512115211530807
+    second: cursor_white_0
+  - first:
+      213: -8157989128254214785
+    second: cursor_white_1
+  - first:
+      213: -6347761294000740337
+    second: cursor_white_2
+  - first:
+      213: 6134583122058731184
+    second: cursor_white_3
+  - first:
+      213: -3070403439221070459
+    second: cursor_white_6
+  - first:
+      213: -2411592788554608225
+    second: cursor_white_7
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -118,8 +136,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1b40e6bca1916a700800000000000000
-      internalID: 551155607272293553
+      spriteID: 732789f6d211bf020800000000000000
+      internalID: 2376512115211530807
       vertices: []
       indices: 
       edges: []
@@ -128,7 +146,7 @@ TextureImporter:
       name: cursor_white_1
       rect:
         serializedVersion: 2
-        x: 23
+        x: 18
         y: 0
         width: 16
         height: 16
@@ -139,8 +157,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2972f9e9948aa8b40800000000000000
-      internalID: 5443348133777975186
+      spriteID: f7da8e85c1009ce80800000000000000
+      internalID: -8157989128254214785
       vertices: []
       indices: 
       edges: []
@@ -149,7 +167,7 @@ TextureImporter:
       name: cursor_white_2
       rect:
         serializedVersion: 2
-        x: 46
+        x: 36
         y: 0
         width: 16
         height: 16
@@ -160,8 +178,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 340a8722945502350800000000000000
-      internalID: 5989881277002063939
+      spriteID: f08ac182cb838e7a0800000000000000
+      internalID: -6347761294000740337
       vertices: []
       indices: 
       edges: []
@@ -170,7 +188,7 @@ TextureImporter:
       name: cursor_white_3
       rect:
         serializedVersion: 2
-        x: 69
+        x: 54
         y: 0
         width: 16
         height: 16
@@ -181,8 +199,92 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e77a110f690c1a740800000000000000
-      internalID: 5161618402448615294
+      spriteID: 0beda6bd8da622550800000000000000
+      internalID: 6134583122058731184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cursor_white_4
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10bc04189021ebf30800000000000000
+      internalID: 4593128501996997377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cursor_white_5
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6313e86fd34545220800000000000000
+      internalID: 2473694720439497014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cursor_white_6
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5852718f65cb365d0800000000000000
+      internalID: -3070403439221070459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cursor_white_7
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f911f4fc22d488ed0800000000000000
+      internalID: -2411592788554608225
       vertices: []
       indices: 
       edges: []

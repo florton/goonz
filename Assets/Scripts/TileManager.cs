@@ -36,7 +36,7 @@ public class TileManager : MonoBehaviour
         SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
         renderer.material = spriteMaterial;
         renderer.sprite = GetRandomSpriteOfTypeAndPosition(type, position);
-        BoxCollider2D boxCollider2D = tile.AddComponent<BoxCollider2D>();
+        // BoxCollider2D boxCollider2D = tile.AddComponent<BoxCollider2D>();
         return tile;
     }
 
