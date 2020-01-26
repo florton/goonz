@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+public class MainMenuControls : MonoBehaviour
 {
+    // Get options
+    public GameObject options;
+
     // Play game
     public void PlayGame()
     {
@@ -16,5 +19,10 @@ public class MainMenu : MonoBehaviour
     {
         // Closes the game
         Application.Quit();
+    }
+
+    public void OpenOptions()
+    {
+        options.SetActive(true);
     }
 }
