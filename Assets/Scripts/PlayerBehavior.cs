@@ -4,7 +4,6 @@ using UnityEngine;
 public class PlayerBehavior : MonoBehaviour
 {
     public float speed;
-    private Rigidbody2D player;
     public TileManager tileManager;
     public Material spriteMaterial;
     public GameObject buildModeOverlay;
@@ -20,35 +19,17 @@ public class PlayerBehavior : MonoBehaviour
 
     private GameObject[,] OverlayTiles;
 
-    // build mode
+    private float prevPlayerX; 
+    private float prevPlayerY; 
     private bool buildMode = false;
-    private Vector3 hiddenPlayerPosition;
-    private int prevPlayerIntX;
-    private int prevPlayerIntY;
+    public Vector3 change;
 
     // Start is called before the first frame update
     void Start(){
-        player = GetComponent<Rigidbody2D>();
         groundTypeSelected = tileManager.GetGroundTypes()[0];
         OverlayTiles = new GameObject[TileManager.maxSize, TileManager.maxSize];
         IndexPlayerSprites();
         SetPlayerSprite();
-    }
-
-    void ToggleBuildMode(int playerIntX, int playerIntY) {
-        if (buildMode == false) {
-            // enter build mode
-            // save player position
-            hiddenPlayerPosition = transform.position;
-            AddOverlayTile(playerIntX, playerIntY);
-        }
-        else {
-            // back to play mode
-            // put player back in position
-            player.MovePosition(hiddenPlayerPosition);
-            RemoveOverlayTile(playerIntX, playerIntY);
-        }
-        buildMode = !buildMode;
     }
 
     void IndexPlayerSprites() {
@@ -60,7 +41,40 @@ public class PlayerBehavior : MonoBehaviour
         cursorSprite = Resources.LoadAll<Sprite>("Sprites/BuildMode/cursor_white");
         tileOverlaySprite = Resources.Load<Sprite>("Sprites/BuildMode/tile_overlay");
     }
+    void SetPlayerSprite() {
+        if (playerDirection == prevPlayerDirection) {
+            if (currentPlayerSprite != null) {
+                return;
+            }
+            else {
+                currentPlayerSprite = allPlayerSprites["idle"];
+            }
+        }
+        else if (playerDirection.x > 0) {
+            currentPlayerSprite = allPlayerSprites["right"];
+        }
+        else if (playerDirection.x < 0) {
+            currentPlayerSprite = allPlayerSprites["left"];
+        }
+        else if (playerDirection.y > 0) {
+            currentPlayerSprite = allPlayerSprites["up"];
+        }
+        else if (playerDirection.y < 0) {
+            currentPlayerSprite = allPlayerSprites["down"];
+        }
+        else {
+            currentPlayerSprite = allPlayerSprites["idle"];
+        }
+    }
 
+    public Sprite[] getCurrentPlayerSprite() {
+        if (!buildMode) {
+            return currentPlayerSprite;
+        }
+        else {
+            return cursorSprite;
+        }
+    }
     void AddOverlayTile(int x, int y) {
         GameObject overlayTile = new GameObject();
         overlayTile.name = "tile overlay";
@@ -74,67 +88,34 @@ public class PlayerBehavior : MonoBehaviour
         OverlayTiles[x, y] = overlayTile;
     }
     void MoveOverlayTile(int prevX, int prevY, int newX, int newY) {
-        Debug.Log(new Vector4(prevX, prevY, newX, newY));
         if (OverlayTiles[prevX, prevY] != null) {
             RemoveOverlayTile(prevX, prevY);
             AddOverlayTile(newX, newY);
         }
     }
     void RemoveOverlayTile(int x, int y) {
-        Destroy(OverlayTiles[x, y]);
+            Destroy(OverlayTiles[x, y]);
+            OverlayTiles[x, y] = null;
     }
 
-    void SetPlayerSprite() {
-        if (playerDirection == prevPlayerDirection) {
-            if (currentPlayerSprite != null) {
-                return;
-            } else {
-                currentPlayerSprite = allPlayerSprites["idle"];
+    void ClearAllTileOverlay() {
+        for(int x = 0; x < TileManager.maxSize; x++) {
+            for(int y = 0; y < TileManager.maxSize; y++) {
+                RemoveOverlayTile(x, y);
             }
-        } else if(playerDirection.x > 0) {
-            currentPlayerSprite = allPlayerSprites["right"];
-        } else if(playerDirection.x < 0) {
-            currentPlayerSprite = allPlayerSprites["left"];
-        } else if(playerDirection.y > 0) {
-            currentPlayerSprite = allPlayerSprites["up"];
-        } else if(playerDirection.y < 0) {
-            currentPlayerSprite = allPlayerSprites["down"];
-        } else {
-            currentPlayerSprite = allPlayerSprites["idle"];
         }
     }
 
-    public Sprite[] getCurrentPlayerSprite() {
-        if (!buildMode) {
-            return currentPlayerSprite;
-        }else {
-            return cursorSprite;
-        }
-    }
-
-    void MoveCursor(float playerX, float playerY, int playerIntX, int playerIntY) {
+    void MoveCursor(float cursorX, float cursorY) {
         // get player position & movement info
-        Vector3 change = new Vector3(
-            Input.GetKey("right") ? 1 : (Input.GetKey("left") ? -1 : 0),
-            Input.GetKey("up") ? 1 : (Input.GetKey("down") ? -1 : 0),
-            0
-        );
         // todo: add constrainment to build cursor movement
         if (change != Vector3.zero) {
-            player.MovePosition(new Vector3(playerX, playerY, 0) + change * speed  * Time.fixedDeltaTime);
-            if (OverlayTiles[playerIntX, playerIntY] == null) {
-
-            }
+            transform.position = (new Vector3(cursorX, cursorY, 0) + change * speed  * Time.fixedDeltaTime);
         }
     }
 
     void MovePlayer(float playerX, float playerY){
         // get player position & movement info
-        Vector3 change = new Vector3(
-            Input.GetKey("right") ? 1 : (Input.GetKey("left") ? -1 : 0),
-            Input.GetKey("up") ? 1 : (Input.GetKey("down") ? -1 : 0),
-            0
-        );
         if (change != Vector3.zero) {
             // keep player within map edges
             // and prevent sticking to edges
@@ -145,27 +126,45 @@ public class PlayerBehavior : MonoBehaviour
             bool canMoveForwardY = tileManager.IsOverTileOrEdgeQuadrant(playerX, nextY);
             // move player
             Vector3 movementVector = new Vector3(canMoveForwardX ? change.x : 0, canMoveForwardY ? change.y : 0, 0);
-            player.MovePosition( new Vector3(playerX , playerY, 0) + movementVector * speed * Time.fixedDeltaTime);
+            transform.position = ( new Vector3(playerX , playerY, 0) + movementVector * speed * Time.fixedDeltaTime);
         }
         prevPlayerDirection = playerDirection;
         playerDirection = change;
         SetPlayerSprite();
     }
+    void ToggleBuildMode() {
+        if (buildMode == false) {
+            // enter build mode
+            // save player position
+            prevPlayerX = transform.position.x;
+            prevPlayerY = transform.position.y;
+        } else {
+            // back to play mode
+            // put player back in position
+            ClearAllTileOverlay();
+            transform.position = (new Vector3(prevPlayerX, prevPlayerY, transform.position.z));
+        }
+        buildMode = !buildMode;
+    }
 
     // Update is called once per frame
     void Update(){
-        float playerX = transform.position.x;
-        float playerY = transform.position.y;
-        int playerIntX = (int)System.Math.Floor(playerX);
-        int playerIntY = (int)System.Math.Floor(playerY);
-
+        change = new Vector3(
+            Input.GetKey("right") ? 1 : (Input.GetKey("left") ? -1 : 0),
+            Input.GetKey("up") ? 1 : (Input.GetKey("down") ? -1 : 0),
+            0
+        );
         // toggle build mode
         if (Input.GetKeyDown(KeyCode.B)) {
-            ToggleBuildMode(playerIntX, playerIntY);
+            ToggleBuildMode();
             return;
         }
         if (buildMode) {
             // build mode cursor controls
+            float cursorX = transform.position.x;
+            float cursorY = transform.position.y;
+            int cursorIntX = (int)System.Math.Floor(cursorX);
+            int cursorIntY = (int)System.Math.Floor(cursorY);
             string[] groundTypes = tileManager.GetGroundTypes();
             for (int i = 1; i <= groundTypes.Length; i++) {
                 if (Input.GetKeyDown(i.ToString())) {
@@ -174,24 +173,24 @@ public class PlayerBehavior : MonoBehaviour
             }
             if (Input.GetKey(KeyCode.Space)) {
                 // place selected tile type with space
-                string currentTileType = tileManager.GetMapTileType(playerIntX, playerIntY);
+                string currentTileType = tileManager.GetMapTileType(cursorIntX, cursorIntY);
                 if (currentTileType != null) {
-                    tileManager.SetMapTileType(playerIntX, playerIntY, groundTypeSelected);
+                    tileManager.SetMapTileType(cursorIntX, cursorIntY, groundTypeSelected);
                 }
                 else {
-                    tileManager.CreateMapTile(playerIntX, playerIntY, groundTypeSelected, "full");
+                    tileManager.CreateMapTile(cursorIntX, cursorIntY, groundTypeSelected, "full");
                 }
             }
-            if(playerIntX != prevPlayerIntX || playerIntY != prevPlayerIntY) {
-                MoveOverlayTile(prevPlayerIntX, prevPlayerIntY, playerIntX, playerIntY);
-            }
-            MoveCursor(playerX, playerY, playerIntX, playerIntY);
+            //if(cursorIntX != prevcursorIntX || cursorIntY != prevcursorIntY) {
+            //    MoveOverlayTile(prevcursorIntX, prevcursorIntY, cursorIntX, cursorIntY);
+            //}
+            MoveCursor(cursorX, cursorY);
         }
         else {
             // player controls
-            MovePlayer(playerX, playerY);
+            float playerX = transform.position.x;
+            float cursorY = transform.position.y;
+            MovePlayer(playerX, cursorY);
         }
-        prevPlayerIntX = playerIntX;
-        prevPlayerIntY = playerIntY;
     }
 }

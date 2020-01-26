@@ -51,7 +51,7 @@ public class TileManager : MonoBehaviour
         GameObject tile = CreateTile(x, y, type, position);
         tile.name = "map tile";
         tile.GetComponent<SpriteRenderer>().sortingOrder = 1;
-        tile.layer = 18; //map layer
+        // tile.layer = 18; //map layer
         mapTiles[x, y] = tile;
         mapTileTypes[x, y] = type;
         ClearEdgeTilesAtPosition(x, y);
