@@ -8,6 +8,9 @@ public class PlayerBehavior : MonoBehaviour
     public Material spriteMaterial;
     public GameObject buildModeOverlay;
 
+    // Open and close options in game
+    public GameObject options;
+
     private string groundTypeSelected;
     private Vector3 playerDirection = Vector3.zero;
     private Vector3 prevPlayerDirection = Vector3.zero;
@@ -192,6 +195,13 @@ public class PlayerBehavior : MonoBehaviour
             float playerX = transform.position.x;
             float cursorY = transform.position.y;
             MovePlayer(playerX, cursorY);
+        }
+
+        // Bring up (and close) the options with escape
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            // Set active when inactive and vice versa
+            options.SetActive(!options.activeSelf);
         }
     }
 }

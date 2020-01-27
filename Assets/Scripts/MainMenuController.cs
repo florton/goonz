@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuControls : MonoBehaviour
+public class MainMenuController : MonoBehaviour
 {
     // Get options
     public GameObject options;
