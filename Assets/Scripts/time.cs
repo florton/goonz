@@ -22,7 +22,6 @@ public class time : MonoBehaviour
 
         minclock.text = min.ToString();
         Light light = GetComponent<Light>();
-        Debug.Log(light.color);
         am.text = am.ToString();
     }
 

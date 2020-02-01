@@ -7,6 +7,7 @@ public class PlayerBehavior : MonoBehaviour
     public TileManager tileManager;
     public Material spriteMaterial;
     public GameObject buildModeOverlay;
+    private Rigidbody2D player;
 
     private string groundTypeSelected;
     private Vector3 playerDirection = Vector3.zero;
@@ -28,6 +29,7 @@ public class PlayerBehavior : MonoBehaviour
 
     // Start is called before the first frame update
     void Start(){
+        player = GetComponent<Rigidbody2D>();
         buildModeSquareSize = (buildModeSize * 2) + 1;
         groundTypeSelected = tileManager.GetGroundTypes()[0];
         overlayTiles = new GameObject[buildModeSquareSize, buildModeSquareSize];
@@ -105,13 +107,13 @@ public class PlayerBehavior : MonoBehaviour
     void AddOverlayTile(int x, int y) {
         GameObject overlayTile = new GameObject();
         overlayTile.name = "tile overlay";
-        overlayTile.transform.position = new Vector3(x + (float)0.5, y + (float)0.5);
+        overlayTile.transform.position = new Vector3(x + 0.5f, y + 0.5f);
         overlayTile.transform.parent = buildModeOverlay.transform;
         SpriteRenderer renderer = overlayTile.AddComponent<SpriteRenderer>();
         renderer.material = spriteMaterial;
         renderer.sprite = tileOverlaySprite;
         renderer.sortingOrder = 100;
-        renderer.color = new Color(0, 255, 14, (float) 0.5);
+        renderer.color = new Color(0, 255, 14, 0.5f);
         overlayTiles[x, y] = overlayTile;
     }
     void GenerateOverlaySquare() {
@@ -172,14 +174,14 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
     }
-    // player movement
 
+    // player movement
     void MovePlayer(float playerX, float playerY){
         // get player position & movement info
         if (change != Vector3.zero) {
             // keep player within map edges
             // and prevent sticking to edges
-            float safetyOffset = (float)5;
+            float safetyOffset = 2f;
             float nextX = playerX + (change.x * speed * Time.deltaTime * safetyOffset);
             float nextY = playerY + (change.y * speed * Time.deltaTime * safetyOffset);
             bool canMoveForwardX = tileManager.IsOverTileOrEdgeQuadrant(nextX, playerY);
@@ -231,9 +233,18 @@ public class PlayerBehavior : MonoBehaviour
             float cursorY = transform.position.y;
             MovePlayer(playerX, cursorY);
         }
+    }
 
-      //transform.rotation = newQuaternion.Quaternion ;
+    void OnTriggerEnter2D(Collider2D col) {
+        SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
+        renderer.sortingOrder = 2;
+        renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 0.65f);
+    }
 
+    void OnTriggerExit2D(Collider2D col) {
+        SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
+        renderer.sortingOrder = 1;
+        renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1);
     }
 
 }
