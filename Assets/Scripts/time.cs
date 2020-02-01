@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class time : MonoBehaviour
 {
-    private float day = 0f;
+    private float day = 0.5f;
     public float min;
     public float hours;
     private const float DaytoSecRat = 600f;
@@ -22,7 +22,6 @@ public class time : MonoBehaviour
 
         minclock.text = min.ToString();
         Light light = GetComponent<Light>();
-        Debug.Log(light.color);
         am.text = am.ToString();
     }
 
