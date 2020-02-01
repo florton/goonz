@@ -7,9 +7,8 @@ public class TileManager : MonoBehaviour
 {
     public Material spriteMaterial;
 
-    static public int startingMapSize = 10;
+    static public int startingMapSize = 20;
     static public int maxSize = 100;
-    static public string startingTileType = "sand";
 
     private GameObject[,] mapTiles = new GameObject[maxSize, maxSize];
     private string[,] mapTileTypes = new string[maxSize, maxSize];
@@ -201,14 +200,16 @@ public class TileManager : MonoBehaviour
     void Start()
     {
         indexSpriteSheet();
-
         // intialize initial island map tiles
         int startingCoord = (maxSize / 2);
-        for (int x = startingCoord; x < startingCoord + startingMapSize; x++)
-        {
-            for (int y = startingCoord; y < startingCoord + startingMapSize; y++)
-            {
-                CreateMapTile(x, y, startingTileType, "full");
+        for (int x = startingCoord; x < startingCoord + startingMapSize; x++){
+            for (int y = startingCoord; y < startingCoord + startingMapSize; y++){
+                CreateMapTile(x, y, "sand", "full");
+            }
+        }
+        for (int x = startingCoord + 1; x < startingCoord + startingMapSize - 1; x++) {
+            for (int y = startingCoord + 1; y < startingCoord + startingMapSize - 1; y++) {
+                SetMapTileType(x, y, "dirt");
             }
         }
     }

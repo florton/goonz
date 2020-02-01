@@ -153,7 +153,7 @@ public class PlayerBehavior : MonoBehaviour
         // get player position & movement info
         // todo: add constrainment to build cursor movement
         if (change != Vector3.zero) {
-            transform.position = (new Vector3(cursorX, cursorY, 0) + change * speed  * Time.fixedDeltaTime);
+            player.MovePosition(new Vector3(cursorX, cursorY, 0) + change * speed  * Time.deltaTime);
         }
         // update tile overlay
         if (overlayCenter.x != cursorIntX || overlayCenter.y != cursorIntY) {
@@ -181,7 +181,7 @@ public class PlayerBehavior : MonoBehaviour
         if (change != Vector3.zero) {
             // keep player within map edges
             // and prevent sticking to edges
-            float safetyOffset = 2f;
+            float safetyOffset = 3f;
             float nextX = playerX + (change.x * speed * Time.deltaTime * safetyOffset);
             float nextY = playerY + (change.y * speed * Time.deltaTime * safetyOffset);
             bool canMoveForwardX = tileManager.IsOverTileOrEdgeQuadrant(nextX, playerY);
@@ -189,7 +189,7 @@ public class PlayerBehavior : MonoBehaviour
 
             // move player
             Vector3 movementVector = new Vector3(canMoveForwardX ? change.x : 0, canMoveForwardY ? change.y : 0, 0);
-            transform.position = ( new Vector3(playerX , playerY, 0) + movementVector * speed * Time.fixedDeltaTime);
+            player.MovePosition( new Vector3(playerX , playerY, 0) + movementVector * speed * Time.deltaTime);
         }
         prevPlayerDirection = playerDirection;
         playerDirection = change;

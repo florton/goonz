@@ -631,7 +631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acdab3d55c9b05e46aa58fec3891ea0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 8
+  speed: 10
   tileManager: {fileID: 1357930021}
   spriteMaterial: {fileID: 2100000, guid: 981d59708152fe34e88404dc673b068c, type: 2}
   buildModeOverlay: {fileID: 2007760143}
