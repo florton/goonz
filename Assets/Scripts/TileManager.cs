@@ -263,15 +263,15 @@ public class TileManager : MonoBehaviour
         //createBlockSquare(xyStart + 1, xyStart + 1, xyEnd - 1, xyEnd - 1, "dirt");
         //createBlockSquare(xyStart + 2, xyStart + 2, xyEnd - 2, xyEnd - 2, "grass");
         createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize + 1, "sand");
-        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 2, halfSize + 1, "sand", 1, 0.6f);
+        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 3, halfSize + 1, "sand", 1, 0.6f);
         createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize -2, halfSize + 1, "sand", 0.8f, 0.8f);
 
         createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize - 1, "dirt");
-        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 2, halfSize - 1, "dirt", 1, 0.6f);
+        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 3, halfSize - 1, "dirt", 1, 0.6f);
         createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize - 2, halfSize - 1, "dirt", 0.8f, 0.8f);
 
         createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize - 2, "grass");
-        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 2, halfSize - 2, "grass", 1, 0.6f);
+        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 3, halfSize - 2, "grass", 1, 0.6f);
         createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize - 2, halfSize - 2, "grass", 0.8f, 0.8f);
 
     }
