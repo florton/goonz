@@ -219,26 +219,61 @@ public class TileManager : MonoBehaviour
         return false;
     }
 
+    void setOrCreateMapTile(int x, int y, string type) {
+        if (mapTileTypes[x, y] == null) {
+            CreateMapTile(x, y, type, "full");
+        }
+        else {
+            SetMapTileType(x, y, type);
+        }
+    }
+
+    void createBlockSquare(int x1, int y1, int x2, int y2, string type) {
+        for (int x = x1; x < x2; x++) {
+            for (int y = y1; y < y2; y++) {
+                setOrCreateMapTile(x, y, type);
+            }
+        }
+    }
+
+    void createBlockCircle(int x, int y, int r, string type, float xStretch = 1, float yStretch = 1) {
+        const double PI = Mathf.PI;
+        double i, angle, x1, y1;
+
+        for (i = 0; i < 360; i += 1) {
+            angle = i;
+            x1 = r * Mathf.Cos((float)(angle * PI / 180)) * xStretch;
+            y1 = r * Mathf.Sin((float)(angle * PI / 180)) * yStretch;
+            setOrCreateMapTile((int) Math.Round(x + x1), (int) Math.Round(y + y1), type);
+        }
+        if (r > 1) {
+            createBlockCircle(x, y, r - 1, type, xStretch, yStretch);
+        }
+    }
+
     // Start is called before the first frame update
     void Start() {
         indexSpriteSheet();
         // intialize initial island map tiles
         int startingCoord = (maxSize / 2);
-        for (int x = startingCoord; x < startingCoord + startingMapSize; x++) {
-            for (int y = startingCoord; y < startingCoord + startingMapSize; y++) {
-                CreateMapTile(x, y, "sand", "full");
-            }
-        }
-        for (int x = startingCoord + 2; x < startingCoord + startingMapSize - 2; x++) {
-            for (int y = startingCoord + 2; y < startingCoord + startingMapSize - 2; y++) {
-                SetMapTileType(x, y, "dirt");
-            }
-        }
-        for (int x = startingCoord + 3; x < startingCoord + startingMapSize - 3; x++) {
-            for (int y = startingCoord + 3; y < startingCoord + startingMapSize - 3; y++) {
-                SetMapTileType(x, y, "grass");
-            }
-        }
+        int xyStart = startingCoord;
+        int xyEnd = startingCoord + startingMapSize;
+        int halfSize = (int)(startingMapSize / 2);
+        //createBlockSquare(xyStart, xyStart, xyEnd, xyEnd, "sand");
+        //createBlockSquare(xyStart + 1, xyStart + 1, xyEnd - 1, xyEnd - 1, "dirt");
+        //createBlockSquare(xyStart + 2, xyStart + 2, xyEnd - 2, xyEnd - 2, "grass");
+        createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize + 1, "sand");
+        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 2, halfSize + 1, "sand", 1, 0.6f);
+        createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize -2, halfSize + 1, "sand", 0.8f, 0.8f);
+
+        createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize - 1, "dirt");
+        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 2, halfSize - 1, "dirt", 1, 0.6f);
+        createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize - 2, halfSize - 1, "dirt", 0.8f, 0.8f);
+
+        createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize - 2, "grass");
+        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 2, halfSize - 2, "grass", 1, 0.6f);
+        createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize - 2, halfSize - 2, "grass", 0.8f, 0.8f);
+
     }
 
     // Update is called once per frame
