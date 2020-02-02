@@ -7,7 +7,7 @@ public class TileManager : MonoBehaviour
 {
     public Material spriteMaterial;
 
-    static public int startingMapSize = 20;
+    static public int startingMapSize = 12;
     static public int maxSize = 100;
 
     private GameObject[,] mapTiles = new GameObject[maxSize, maxSize];
@@ -18,15 +18,13 @@ public class TileManager : MonoBehaviour
 
     private Vector2 lastSetTileCoords;
     private string lastSetTileType;
-    Sprite GetRandomSpriteOfTypeAndPosition(string type, string position)
-    {   
+    Sprite GetRandomSpriteOfTypeAndPosition(string type, string position){   
         int randSpriteIndex = UnityEngine.Random.Range(0, groundTypes[type][position].Count);
         Sprite sprite = groundTypes[type][position][randSpriteIndex];
         return sprite;
     }
 
-    GameObject CreateTile(int x, int y, string type, string position)
-    {
+    GameObject CreateTile(int x, int y, string type, string position){
         // position either "full", "edge", or "corner"
         GameObject tile = new GameObject();
         tile.transform.position = new Vector3(x + (float)0.5, y + (float)0.5);
@@ -39,14 +37,12 @@ public class TileManager : MonoBehaviour
         return tile;
     }
 
-    public string[] GetGroundTypes()
-    {
+    public string[] GetGroundTypes(){
         string[] keyList = groundTypes.Keys.ToArray();
         return keyList;
     }
 
-    public void CreateMapTile(int x, int y, string type, string position)
-    {
+    public void CreateMapTile(int x, int y, string type, string position){
         GameObject tile = CreateTile(x, y, type, position);
         tile.name = "map tile";
         tile.GetComponent<SpriteRenderer>().sortingOrder = 1;
@@ -57,22 +53,19 @@ public class TileManager : MonoBehaviour
         GenerateTileEdges(x, y);
     }
 
-    bool AllEdgesSameTypeAsBase(int x, int y, string type)
-    {
+    bool AllEdgesSameTypeAsBase(int x, int y, string type){
         bool allEdgesSameType = true;
         bool tileIsNotEmpty = mapTileTypes[x, y] != null;
-        for (int z = 0; z < 8; z++)
-        {
+        for (int z = 0; z < 8; z++){
             string edgeType = mapTileEdgeTypes[x, y, z];
-            if (edgeType != null && mapTileEdgeTypes[x, y, z] != type)
-            {
+            if (edgeType != null && mapTileEdgeTypes[x, y, z] != type){
                 allEdgesSameType = false;
             }
         }
         return allEdgesSameType && tileIsNotEmpty;
     }
 
-    void LowerSortOrderOfAllEdges(int x, int y) {
+    void LowerSortOrderOfAllEdges(int x, int y){
         // lower previous edge zs sorting order by one 
         for (int z = 0; z < 8; z++) {
             GameObject previousEdgeTile = mapTileEdges[x, y, z];
@@ -85,36 +78,31 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    void CreateOrSetEdgeTile(int x, int y, string type, string position, Vector3 rotation)
-    {
+    void CreateOrSetEdgeTile(int x, int y, string type, string position, Vector3 rotation){
         // rotation z must be 0, 90, 180, or 270       
         int edgeIndex = System.Convert.ToInt32(rotation.z / 90);
         edgeIndex = position == "corner" ? edgeIndex + 4 : edgeIndex;
         GameObject edgeTile = mapTileEdges[x, y, edgeIndex];
         SpriteRenderer renderer = edgeTile ? edgeTile.GetComponent<SpriteRenderer>() : null;
         // if all edge tiles are same type as map tile under it clear edges
-        if (AllEdgesSameTypeAsBase(x, y, mapTileTypes[x, y]))
-        {
+        if (AllEdgesSameTypeAsBase(x, y, mapTileTypes[x, y])){
             ClearEdgeTilesAtPosition(x, y);
-            if (mapTileTypes[x, y] == type)
-            {
+            if (mapTileTypes[x, y] == type){
                  return;
             }
         }
         // dont make edges of same type and postion, just bring to front
-        if (mapTileEdgeTypes[x, y, edgeIndex] == type) {
+        if (mapTileEdgeTypes[x, y, edgeIndex] == type){
             LowerSortOrderOfAllEdges(x, y);
             renderer.sortingOrder = 20;
             return;
         }
         // create or set edge
-        if (renderer)
-        {
+        if (renderer){
             // if edge z already exists
             renderer.sprite = GetRandomSpriteOfTypeAndPosition(type, position);
         }
-        else
-        {
+        else{
             // new edge z
             edgeTile = CreateTile(x, y, type, position);
             edgeTile.name = "tile edge";
@@ -129,13 +117,10 @@ public class TileManager : MonoBehaviour
         mapTileEdges[x, y, edgeIndex] = edgeTile;
     }
 
-    void ClearEdgeTilesAtPosition(int x, int y)
-    {
-        for (int z = 0; z < 8; z++)
-        {
+    void ClearEdgeTilesAtPosition(int x, int y){
+        for (int z = 0; z < 8; z++){
             GameObject edgeTile = mapTileEdges[x, y, z];
-            if (edgeTile)
-            {
+            if (edgeTile){
                 edgeTile.GetComponent<SpriteRenderer>().sprite = null;
                 mapTileEdgeTypes[x, y, z] = null;
                 mapTileEdges[x, y, z] = null;
@@ -144,13 +129,11 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    public void SetMapTileType(int x, int y, string type)
-    {
+    public void SetMapTileType(int x, int y, string type){
         if(x == lastSetTileCoords.x && y == lastSetTileCoords.y && type == lastSetTileType) {
             return;
         }
-        if (mapTileTypes[x, y] != type)
-        {
+        if (mapTileTypes[x, y] != type){
             mapTileTypes[x, y] = type;
             int randSpriteIndex = UnityEngine.Random.Range(0, groundTypes[type]["full"].Count);
             mapTiles[x, y].GetComponent<SpriteRenderer>().sprite = groundTypes[type]["full"][randSpriteIndex];
@@ -161,8 +144,7 @@ public class TileManager : MonoBehaviour
         lastSetTileType = type;
     }
 
-    void GenerateTileEdges(int x, int y)
-    {
+    void GenerateTileEdges(int x, int y){
         string currentTileType = mapTileTypes[x, y];
         CreateOrSetEdgeTile(x - 1, y, currentTileType, "edge", new Vector3(0, 0, 90));
         CreateOrSetEdgeTile(x + 1, y, currentTileType, "edge", new Vector3(0, 0, 270));
@@ -174,21 +156,17 @@ public class TileManager : MonoBehaviour
         CreateOrSetEdgeTile(x - 1, y + 1, currentTileType, "corner", new Vector3(0, 0, 0));
     }
 
-    void indexSpriteSheet()
-    {
+    void indexSpriteSheet(){
         // load sprites into dictionary by type and position
         // each ground type has 15 total sprites on the spriteSheet 
         Sprite[] groundSprites = Resources.LoadAll<Sprite>("Sprites/Terrain");
-        foreach (var sprite in groundSprites)
-        {
+        foreach (var sprite in groundSprites){
             // name = "type_position_index"
             string[] spriteNames = sprite.name.Split('_');
-            if (!groundTypes.ContainsKey(spriteNames[0]))
-            {
+            if (!groundTypes.ContainsKey(spriteNames[0])){
                 groundTypes.Add(spriteNames[0], new Dictionary<string, List<Sprite>>());
             }
-            if (!groundTypes[spriteNames[0]].ContainsKey(spriteNames[1]))
-            {
+            if (!groundTypes[spriteNames[0]].ContainsKey(spriteNames[1])){
                 groundTypes[spriteNames[0]].Add(spriteNames[1], new List<Sprite>());
             }
             groundTypes[spriteNames[0]][spriteNames[1]].Add(sprite);
@@ -196,38 +174,16 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        indexSpriteSheet();
-        // intialize initial island map tiles
-        int startingCoord = (maxSize / 2);
-        for (int x = startingCoord; x < startingCoord + startingMapSize; x++){
-            for (int y = startingCoord; y < startingCoord + startingMapSize; y++){
-                CreateMapTile(x, y, "sand", "full");
-            }
-        }
-        for (int x = startingCoord + 1; x < startingCoord + startingMapSize - 1; x++) {
-            for (int y = startingCoord + 1; y < startingCoord + startingMapSize - 1; y++) {
-                SetMapTileType(x, y, "dirt");
-            }
-        }
-    }
-
-    public string GetMapTileType(int x, int y)
-    {
+    public string GetMapTileType(int x, int y){
         return mapTileTypes[x, y];
     }
 
-    private Vector4 GetEdgeQuadrant(int x, int y, int z)
-    {
+    private Vector4 GetEdgeQuadrant(int x, int y, int z){
         // returns {x: xMin, y: xMax, z: yMin, w: yMax] 
-        if (!mapTileEdges[x, y, z])
-        {
+        if (!mapTileEdges[x, y, z]){
             return Vector4.zero;
         }
-        switch (z)
-        {
+        switch (z){
             // edges
             case 0: return new Vector4(x, x + 1, y, y + (float)0.5);
             case 1: return new Vector4(x + (float)0.5, x + 1, y, y + 1);
@@ -242,35 +198,51 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    public bool IsOverTileOrEdgeQuadrant(float x, float y)
-    {
+    public bool IsOverTileOrEdgeQuadrant(float x, float y){
         int intX = (int)System.Math.Floor(x);
         int intY = (int)System.Math.Floor(y);
-        if (mapTileTypes[intX, intY] != null)
-        {
+        if (mapTileTypes[intX, intY] != null){
             return true;
         }
-        for (int z = 0; z < 8; z++)
-        {
+        for (int z = 0; z < 8; z++){
             Vector4 quadrant = GetEdgeQuadrant(intX, intY, z);
-            if (quadrant == Vector4.zero)
-            {
+            if (quadrant == Vector4.zero){
                 continue;
             }
             if (x >= quadrant.x && x <= quadrant.y &&
-                y >= quadrant.z && y <= quadrant.w
-            )
-            {
-                return true;
+              y >= quadrant.z && y <= quadrant.w
+            ){
+              return true;
             }
 
         }
         return false;
     }
 
+    // Start is called before the first frame update
+    void Start() {
+        indexSpriteSheet();
+        // intialize initial island map tiles
+        int startingCoord = (maxSize / 2);
+        for (int x = startingCoord; x < startingCoord + startingMapSize; x++) {
+            for (int y = startingCoord; y < startingCoord + startingMapSize; y++) {
+                CreateMapTile(x, y, "sand", "full");
+            }
+        }
+        for (int x = startingCoord + 2; x < startingCoord + startingMapSize - 2; x++) {
+            for (int y = startingCoord + 2; y < startingCoord + startingMapSize - 2; y++) {
+                SetMapTileType(x, y, "dirt");
+            }
+        }
+        for (int x = startingCoord + 3; x < startingCoord + startingMapSize - 3; x++) {
+            for (int y = startingCoord + 3; y < startingCoord + startingMapSize - 3; y++) {
+                SetMapTileType(x, y, "grass");
+            }
+        }
+    }
+
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
 
     }
 
