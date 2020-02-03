@@ -8,21 +8,21 @@ public class time : MonoBehaviour
     private float day = 0f;
     public float min;
     public float hours;
-    private const float DaytoSecRat = 600f;
+    private const float DaytoSecRat = 60f;
     public Text hrsclock;
     public Text minclock;
     public float sun;
     public Text am;
-
+    private Light sunLight;
+    public Light pointLight;
 
     // Start is called before the first frame update
     void Start()
     {
         hrsclock.text = hours.ToString();
-
         minclock.text = min.ToString();
-        Light light = GetComponent<Light>();
         am.text = am.ToString();
+        sunLight = GetComponent<Light>();
     }
 
     // Update is called once per frame
@@ -59,7 +59,8 @@ public class time : MonoBehaviour
 
         hrsclock.text = Mathf.Round(hours).ToString();
 
-        GetComponent<Light>().color = new Color ( .5f * sun * 2, .5f * sun * 2, .8f, 1f);
+        sunLight.color = new Color ( .5f * sun * 2, .5f * sun * 2, .8f, 1f);
+        pointLight.intensity = 1 - sun;
      }
 
 }

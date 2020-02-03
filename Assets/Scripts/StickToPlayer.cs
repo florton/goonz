@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class StickToPlayer : MonoBehaviour
 {
     public Transform player;
     public Vector3 offset;
