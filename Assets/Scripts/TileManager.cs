@@ -262,17 +262,28 @@ public class TileManager : MonoBehaviour
         //createBlockSquare(xyStart, xyStart, xyEnd, xyEnd, "sand");
         //createBlockSquare(xyStart + 1, xyStart + 1, xyEnd - 1, xyEnd - 1, "dirt");
         //createBlockSquare(xyStart + 2, xyStart + 2, xyEnd - 2, xyEnd - 2, "grass");
+        Vector2Int circle2Coords = new Vector2Int(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(-5, 5));
+        Vector2 circle2Shape = new Vector2(UnityEngine.Random.Range(0.5f, 1.5f), UnityEngine.Random.Range(0.5f, 1.5f));
+        Vector2Int circle3Coords = new Vector2Int(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(-5, 5));
+        Vector2 circle3Shape = new Vector2(UnityEngine.Random.Range(0.5f, 1.5f), UnityEngine.Random.Range(0.5f, 1.5f));
+        Vector2Int circle4Coords = new Vector2Int(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(-5, 5));
+        Vector2 circle4Shape = new Vector2(UnityEngine.Random.Range(0.5f, 1.5f), UnityEngine.Random.Range(0.5f, 1.5f));
+
+
         createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize + 1, "sand");
-        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 3, halfSize + 1, "sand", 1, 0.6f);
-        createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize -2, halfSize + 1, "sand", 0.8f, 0.8f);
+        createBlockCircle(xyStart + halfSize + circle2Coords.x, xyEnd - halfSize + circle2Coords.y, halfSize + 1, "sand", circle2Shape.x, circle2Shape.y);
+        createBlockCircle(xyStart + halfSize + circle3Coords.x, xyEnd - halfSize + circle3Coords.y, halfSize + 1, "sand", circle3Shape.x, circle3Shape.y);
+        createBlockCircle(xyStart + halfSize + circle4Coords.x, xyEnd - halfSize + circle4Coords.y, halfSize + 1, "sand", circle4Shape.x, circle4Shape.y);
 
         createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize - 1, "dirt");
-        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 3, halfSize - 1, "dirt", 1, 0.6f);
-        createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize - 2, halfSize - 1, "dirt", 0.8f, 0.8f);
+        createBlockCircle(xyStart + halfSize + circle2Coords.x, xyEnd - halfSize + circle2Coords.y, halfSize - 1, "dirt", circle2Shape.x, circle2Shape.y);
+        createBlockCircle(xyStart + halfSize + circle3Coords.x, xyEnd - halfSize + circle3Coords.y, halfSize - 1, "dirt", circle3Shape.x, circle3Shape.y);
+        createBlockCircle(xyStart + halfSize + circle4Coords.x, xyEnd - halfSize + circle4Coords.y, halfSize - 1, "dirt", circle4Shape.x, circle4Shape.y);
 
         createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize - 2, "grass");
-        createBlockCircle(xyStart + halfSize + 1, xyEnd - halfSize + 3, halfSize - 2, "grass", 1, 0.6f);
-        createBlockCircle(xyStart + halfSize - 2, xyEnd - halfSize - 2, halfSize - 2, "grass", 0.8f, 0.8f);
+        createBlockCircle(xyStart + halfSize + circle2Coords.x, xyEnd - halfSize + circle2Coords.y, halfSize - 2, "grass", circle2Shape.x, circle2Shape.y);
+        createBlockCircle(xyStart + halfSize + circle3Coords.x, xyEnd - halfSize + circle3Coords.y, halfSize - 2, "grass", circle3Shape.x, circle3Shape.y);
+        createBlockCircle(xyStart + halfSize + circle4Coords.x, xyEnd - halfSize + circle4Coords.y, halfSize - 2, "grass", circle4Shape.x, circle4Shape.y);
 
     }
 
