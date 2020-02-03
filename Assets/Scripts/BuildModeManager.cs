@@ -13,7 +13,6 @@ public class BuildModeManager : MonoBehaviour
     private static int buildModeSquareSize = (buildModeSize * 2) + 1;
     private GameObject[,] overlayTiles;
     private Vector2Int overlayCenter;
-    private bool wasGenerated = false;
 
     // Start is called before the first frame update
     void Start() {
@@ -33,16 +32,12 @@ public class BuildModeManager : MonoBehaviour
         overlayTiles[x, y] = overlayTile;
     }
     public void GenerateOverlaySquare() {
-        if (wasGenerated) {
-            return;
-        }
         for (int x = 0; x < buildModeSquareSize; x++) {
             for (int y = 0; y < buildModeSquareSize; y++) {
                 AddOverlayTile(x, y);
             }
         }
         overlayCenter = new Vector2Int(0, 0);
-        wasGenerated = true;
     }
     public void ShowOverlayTiles() {
         for (int x = 0; x < buildModeSquareSize; x++) {

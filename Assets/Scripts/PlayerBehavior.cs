@@ -29,6 +29,7 @@ public class PlayerBehavior : MonoBehaviour
         selectedGroundType = tileManager.GetGroundTypes()[0];
         IndexPlayerSprites();
         SetPlayerSprite();
+        buildModeManager.GenerateOverlaySquare();
     }
 
     // player sprites
