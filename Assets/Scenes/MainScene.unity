@@ -567,7 +567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1608078013}
-  offset: {x: 0, y: 0.4, z: -1}
+  offset: {x: 0.15, y: 0.4, z: -1}
 --- !u!108 &1020415133
 Light:
   m_ObjectHideFlags: 0
@@ -996,6 +996,7 @@ MonoBehaviour:
   minclock: {fileID: 1930366624}
   sun: 0
   am: {fileID: 1403974545}
+  pointLight: {fileID: 1020415133}
 --- !u!1 &1767068014
 GameObject:
   m_ObjectHideFlags: 0

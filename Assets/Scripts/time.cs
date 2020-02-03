@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 public class time : MonoBehaviour
 {
-    private float day = 0f;
+    private float day = 0.5f;
     public float min;
     public float hours;
-    private const float DaytoSecRat = 60f;
+    private const float DaytoSecRat = 600f;
     public Text hrsclock;
     public Text minclock;
     public float sun;
@@ -60,7 +60,7 @@ public class time : MonoBehaviour
         hrsclock.text = Mathf.Round(hours).ToString();
 
         sunLight.color = new Color ( .5f * sun * 2, .5f * sun * 2, .8f, 1f);
-        pointLight.intensity = 1 - sun;
+        pointLight.intensity = 0.9f - sun;
      }
 
 }
