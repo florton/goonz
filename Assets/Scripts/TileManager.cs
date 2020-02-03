@@ -6,9 +6,10 @@ using System;
 public class TileManager : MonoBehaviour
 {
     public Material spriteMaterial;
+    public StructureManager structureManager;
 
-    static public int startingMapSize = 12;
-    static public int maxSize = 100;
+    private static int startingMapSize = 12;
+    private static int maxSize = 100;
 
     private GameObject[,] mapTiles = new GameObject[maxSize, maxSize];
     private string[,] mapTileTypes = new string[maxSize, maxSize];
@@ -40,6 +41,10 @@ public class TileManager : MonoBehaviour
     public string[] GetGroundTypes(){
         string[] keyList = groundTypes.Keys.ToArray();
         return keyList;
+    }
+
+    public int getMaxMapSize() {
+        return maxSize;
     }
 
     public void CreateMapTile(int x, int y, string type, string position){
@@ -251,24 +256,19 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start() {
-        indexSpriteSheet();
+    void GenerateStartingIsland() {
         // intialize initial island map tiles
         int startingCoord = (maxSize / 2);
         int xyStart = startingCoord;
         int xyEnd = startingCoord + startingMapSize;
         int halfSize = (int)(startingMapSize / 2);
-        //createBlockSquare(xyStart, xyStart, xyEnd, xyEnd, "sand");
-        //createBlockSquare(xyStart + 1, xyStart + 1, xyEnd - 1, xyEnd - 1, "dirt");
-        //createBlockSquare(xyStart + 2, xyStart + 2, xyEnd - 2, xyEnd - 2, "grass");
+
         Vector2Int circle2Coords = new Vector2Int(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(-5, 5));
         Vector2 circle2Shape = new Vector2(UnityEngine.Random.Range(0.5f, 1.5f), UnityEngine.Random.Range(0.5f, 1.5f));
         Vector2Int circle3Coords = new Vector2Int(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(-5, 5));
         Vector2 circle3Shape = new Vector2(UnityEngine.Random.Range(0.5f, 1.5f), UnityEngine.Random.Range(0.5f, 1.5f));
         Vector2Int circle4Coords = new Vector2Int(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(-5, 5));
         Vector2 circle4Shape = new Vector2(UnityEngine.Random.Range(0.5f, 1.5f), UnityEngine.Random.Range(0.5f, 1.5f));
-
 
         createBlockCircle(xyStart + halfSize, xyEnd - halfSize, halfSize + 1, "sand");
         createBlockCircle(xyStart + halfSize + circle2Coords.x, xyEnd - halfSize + circle2Coords.y, halfSize + 1, "sand", circle2Shape.x, circle2Shape.y);
@@ -284,7 +284,13 @@ public class TileManager : MonoBehaviour
         createBlockCircle(xyStart + halfSize + circle2Coords.x, xyEnd - halfSize + circle2Coords.y, halfSize - 2, "grass", circle2Shape.x, circle2Shape.y);
         createBlockCircle(xyStart + halfSize + circle3Coords.x, xyEnd - halfSize + circle3Coords.y, halfSize - 2, "grass", circle3Shape.x, circle3Shape.y);
         createBlockCircle(xyStart + halfSize + circle4Coords.x, xyEnd - halfSize + circle4Coords.y, halfSize - 2, "grass", circle4Shape.x, circle4Shape.y);
+    }
 
+    // Start is called before the first frame update
+    void Start() {
+        indexSpriteSheet();
+        GenerateStartingIsland();
+        structureManager.GenerateStartingStructures();
     }
 
     // Update is called once per frame
