@@ -6,37 +6,31 @@ public class PlayerBehavior : MonoBehaviour
     public float speed;
     public TileManager tileManager;
     public Material spriteMaterial;
-    public GameObject buildModeOverlay;
+
     private Rigidbody2D player;
-
-    private string groundTypeSelected;
-    private Vector3 playerDirection = Vector3.zero;
-    private Vector3 prevPlayerDirection = Vector3.zero;
-
     private Dictionary<string, Sprite[]> allPlayerSprites = new Dictionary<string, Sprite[]>();
     private Sprite[] currentPlayerSprite;
     private Sprite[] cursorSprite;
-    private Sprite tileOverlaySprite;
+    private BuildModeManager buildModeManager;
 
+    private Vector3 change;
+    private Vector3 playerDirection = Vector3.zero;
+    private Vector3 prevPlayerDirection = Vector3.zero;
+    private string selectedGroundType;
+    private bool buildMode = false;
     private float prevPlayerX;
     private float prevPlayerY;
-    private bool buildMode = false;
-    private Vector3 change;
-    private int buildModeSize = 1; // 0 = 1x1, 1 = 3x3, 2 = 5x5
-    private int buildModeSquareSize;
-    private GameObject[,] overlayTiles;
-    private Vector2Int overlayCenter;
+
 
     // Start is called before the first frame update
     void Start(){
         player = GetComponent<Rigidbody2D>();
-        buildModeSquareSize = (buildModeSize * 2) + 1;
-        groundTypeSelected = tileManager.GetGroundTypes()[0];
-        overlayTiles = new GameObject[buildModeSquareSize, buildModeSquareSize];
+        buildModeManager = GetComponent<BuildModeManager>();
+        selectedGroundType = tileManager.GetGroundTypes()[0];
         IndexPlayerSprites();
         SetPlayerSprite();
-        GenerateOverlaySquare();
-        HideOverlayTiles();
+        buildModeManager.GenerateOverlaySquare();
+        buildModeManager.HideOverlayTiles();
     }
 
     // player sprites
@@ -47,7 +41,6 @@ public class PlayerBehavior : MonoBehaviour
         allPlayerSprites["left"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_left");
         allPlayerSprites["right"] = Resources.LoadAll<Sprite>("Sprites/Player/player_walk_right");
         cursorSprite = Resources.LoadAll<Sprite>("Sprites/BuildMode/cursor_white");
-        tileOverlaySprite = Resources.Load<Sprite>("Sprites/BuildMode/tile_overlay");
     }
     void SetPlayerSprite() {
         if (playerDirection == prevPlayerDirection) {
@@ -92,87 +85,27 @@ public class PlayerBehavior : MonoBehaviour
             float playerY = transform.position.y;
             int cursorIntX = (int)System.Math.Floor(playerX);
             int cursorIntY = (int)System.Math.Floor(playerY);
-                        prevPlayerX = playerX;
+            prevPlayerX = playerX;
             prevPlayerY = playerY;
-            ShowOverlayTiles();
+            buildModeManager.ShowOverlayTiles();
             MoveCursor(playerX, playerY, cursorIntX, cursorIntY);
         }
         else {
             // back to play mode
             transform.position = (new Vector3(prevPlayerX, prevPlayerY, transform.position.z));
-            HideOverlayTiles();
+            buildModeManager.HideOverlayTiles();
         }
         buildMode = !buildMode;
     }
-    void AddOverlayTile(int x, int y) {
-        GameObject overlayTile = new GameObject();
-        overlayTile.name = "tile overlay";
-        overlayTile.transform.position = new Vector3(x + 0.5f, y + 0.5f);
-        overlayTile.transform.parent = buildModeOverlay.transform;
-        SpriteRenderer renderer = overlayTile.AddComponent<SpriteRenderer>();
-        renderer.material = spriteMaterial;
-        renderer.sprite = tileOverlaySprite;
-        renderer.sortingOrder = 100;
-        renderer.color = new Color(0, 255, 14, 0.5f);
-        overlayTiles[x, y] = overlayTile;
-    }
-    void GenerateOverlaySquare() {
-        for (int x = 0; x < buildModeSquareSize; x++) {
-            for (int y = 0; y < buildModeSquareSize; y++) {
-                AddOverlayTile(x, y);
-            }
-        }
-        overlayCenter = new Vector2Int(0, 0);
-    }
-    void ShowOverlayTiles() {
-        for (int x = 0; x < buildModeSquareSize; x++) {
-            for (int y = 0; y < buildModeSquareSize; y++) {
-                overlayTiles[x, y].SetActive(true);
-            }
-        }
-    }
-    void HideOverlayTiles() {
-        for (int x = 0; x < buildModeSquareSize; x++) {
-            for (int y = 0; y < buildModeSquareSize; y++) {
-                overlayTiles[x, y].SetActive(false);
-            }
-        }
-    }
-    void MoveOverlayTiles(int centerX, int centerY) {
-        for (int x = 0; x < buildModeSquareSize; x++) {
-            for (int y = 0; y < buildModeSquareSize; y++) {
-                overlayTiles[x, y].transform.position = new Vector3(
-                    (centerX - buildModeSize) + x + 0.5f,
-                    (centerY - buildModeSize) + y + 0.5f,
-                    overlayTiles[x, y].transform.position.z
-                );
-            }
-        }
-    }
+
     void MoveCursor(float cursorX, float cursorY, int cursorIntX, int cursorIntY) {
         // get player position & movement info
         // todo: add constrainment to build cursor movement
         if (change != Vector3.zero) {
-            player.MovePosition(new Vector3(cursorX, cursorY, 0) + change * speed  * Time.deltaTime);
+            player.MovePosition(new Vector3(cursorX, cursorY, 0) + change * speed * 2f * Time.deltaTime);
         }
         // update tile overlay
-        if (overlayCenter.x != cursorIntX || overlayCenter.y != cursorIntY) {
-            MoveOverlayTiles(cursorIntX, cursorIntY);
-        }
-        overlayCenter = new Vector2Int(cursorIntX, cursorIntY);
-    }
-    void PlaceTilesFromOverlay(int cursorIntX, int cursorIntY) {
-        for (int x = cursorIntX - buildModeSize; x <= cursorIntX + buildModeSize; x++) {
-            for (int y = cursorIntY - buildModeSize; y <= cursorIntY + buildModeSize; y++) {
-                string currentTileType = tileManager.GetMapTileType(x, y);
-                if (currentTileType != null) {
-                    tileManager.SetMapTileType(x, y, groundTypeSelected);
-                }
-                else {
-                    tileManager.CreateMapTile(x, y, groundTypeSelected, "full");
-                }
-            }
-        }
+        buildModeManager.MoveOverlayTiles(cursorIntX, cursorIntY);
     }
 
     // player movement
@@ -218,12 +151,12 @@ public class PlayerBehavior : MonoBehaviour
             string[] groundTypes = tileManager.GetGroundTypes();
             for (int i = 1; i <= groundTypes.Length; i++) {
                 if (Input.GetKeyDown(i.ToString())) {
-                    groundTypeSelected = tileManager.GetGroundTypes()[i - 1];
+                    selectedGroundType = tileManager.GetGroundTypes()[i - 1];
                 }
             }
             if (Input.GetKey(KeyCode.Space)) {
                 // place selected tile type with space
-                PlaceTilesFromOverlay(cursorIntX, cursorIntY);
+                buildModeManager.SetMapTilesFromBuildOverlay(cursorIntX, cursorIntY, selectedGroundType);
             }
             MoveCursor(cursorX, cursorY, cursorIntX, cursorIntY);
         }

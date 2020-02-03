@@ -609,6 +609,7 @@ GameObject:
   - component: {fileID: 1608078013}
   - component: {fileID: 1608078012}
   - component: {fileID: 1608078009}
+  - component: {fileID: 1608078015}
   - component: {fileID: 1608078014}
   - component: {fileID: 1608078011}
   - component: {fileID: 1608078010}
@@ -634,7 +635,6 @@ MonoBehaviour:
   speed: 10
   tileManager: {fileID: 1357930021}
   spriteMaterial: {fileID: 2100000, guid: 981d59708152fe34e88404dc673b068c, type: 2}
-  buildModeOverlay: {fileID: 2007760143}
 --- !u!50 &1608078010
 Rigidbody2D:
   serializedVersion: 4
@@ -762,6 +762,21 @@ MonoBehaviour:
   loop: 1
   frameSeconds: 0.1
   playerBehavior: {fileID: 1608078009}
+--- !u!114 &1608078015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608078008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8db3859061bb3644becd515ff848bdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteMaterial: {fileID: 2100000, guid: 981d59708152fe34e88404dc673b068c, type: 2}
+  buildModeOverlay: {fileID: 2007760143}
+  tileManager: {fileID: 1357930021}
 --- !u!224 &1641121674 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3922916461248376186, guid: 804f41d99c0d4ef0e865c19919b6def1,
