@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class time : MonoBehaviour
 {
-    private float day = 0.5f;
+    private float day = 0f;
     public float min;
     public float hours;
     private const float DaytoSecRat = 600f;
