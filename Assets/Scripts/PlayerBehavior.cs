@@ -29,8 +29,6 @@ public class PlayerBehavior : MonoBehaviour
         selectedGroundType = tileManager.GetGroundTypes()[0];
         IndexPlayerSprites();
         SetPlayerSprite();
-        buildModeManager.GenerateOverlaySquare();
-        buildModeManager.HideOverlayTiles();
     }
 
     // player sprites
@@ -87,6 +85,7 @@ public class PlayerBehavior : MonoBehaviour
             int cursorIntY = (int)System.Math.Floor(playerY);
             prevPlayerX = playerX;
             prevPlayerY = playerY;
+            buildModeManager.GenerateOverlaySquare();
             buildModeManager.ShowOverlayTiles();
             MoveCursor(playerX, playerY, cursorIntX, cursorIntY);
         }

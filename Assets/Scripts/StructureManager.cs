@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class StructureManager : MonoBehaviour
 {
+    public GameObject structures;
     public GameObject palmTree;
     public TileManager tileManager;
 
@@ -24,6 +25,7 @@ public class StructureManager : MonoBehaviour
                 if(type == "grass") {
                     if (UnityEngine.Random.Range(0f, 1f) > 0.98) {
                         GameObject tree = Instantiate(palmTree, new Vector3(x + 0.5f, y + 0.5f, 1), Quaternion.identity);
+                        tree.transform.parent = structures.transform;
                         structuresMap[x, y] = tree;
                     }
                 }                

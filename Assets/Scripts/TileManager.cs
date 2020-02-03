@@ -19,6 +19,13 @@ public class TileManager : MonoBehaviour
 
     private Vector2 lastSetTileCoords;
     private string lastSetTileType;
+
+    // Start is called before the first frame update
+    void Start() {
+        indexSpriteSheet();
+        GenerateStartingIsland();
+        structureManager.GenerateStartingStructures();
+    }
     Sprite GetRandomSpriteOfTypeAndPosition(string type, string position){   
         int randSpriteIndex = UnityEngine.Random.Range(0, groundTypes[type][position].Count);
         Sprite sprite = groundTypes[type][position][randSpriteIndex];
@@ -284,13 +291,6 @@ public class TileManager : MonoBehaviour
         createBlockCircle(xyStart + halfSize + circle2Coords.x, xyEnd - halfSize + circle2Coords.y, halfSize - 2, "grass", circle2Shape.x, circle2Shape.y);
         createBlockCircle(xyStart + halfSize + circle3Coords.x, xyEnd - halfSize + circle3Coords.y, halfSize - 2, "grass", circle3Shape.x, circle3Shape.y);
         createBlockCircle(xyStart + halfSize + circle4Coords.x, xyEnd - halfSize + circle4Coords.y, halfSize - 2, "grass", circle4Shape.x, circle4Shape.y);
-    }
-
-    // Start is called before the first frame update
-    void Start() {
-        indexSpriteSheet();
-        GenerateStartingIsland();
-        structureManager.GenerateStartingStructures();
     }
 
     // Update is called once per frame

@@ -9,11 +9,17 @@ public class BuildModeManager : MonoBehaviour
     public TileManager tileManager;
 
     private Sprite tileOverlaySprite;
-    private int buildModeSize = 1; // 0 = 1x1, 1 = 3x3, 2 = 5x5
-    private int buildModeSquareSize;
+    private static int buildModeSize = 1; // 0 = 1x1, 1 = 3x3, 2 = 5x5
+    private static int buildModeSquareSize = (buildModeSize * 2) + 1;
     private GameObject[,] overlayTiles;
     private Vector2Int overlayCenter;
+    private bool wasGenerated = false;
 
+    // Start is called before the first frame update
+    void Start() {
+        overlayTiles = new GameObject[buildModeSquareSize, buildModeSquareSize];
+        tileOverlaySprite = Resources.Load<Sprite>("Sprites/BuildMode/tile_overlay");
+    }
     void AddOverlayTile(int x, int y) {
         GameObject overlayTile = new GameObject();
         overlayTile.name = "tile overlay";
@@ -27,35 +33,47 @@ public class BuildModeManager : MonoBehaviour
         overlayTiles[x, y] = overlayTile;
     }
     public void GenerateOverlaySquare() {
+        if (wasGenerated) {
+            return;
+        }
         for (int x = 0; x < buildModeSquareSize; x++) {
             for (int y = 0; y < buildModeSquareSize; y++) {
                 AddOverlayTile(x, y);
             }
         }
         overlayCenter = new Vector2Int(0, 0);
+        wasGenerated = true;
     }
     public void ShowOverlayTiles() {
         for (int x = 0; x < buildModeSquareSize; x++) {
             for (int y = 0; y < buildModeSquareSize; y++) {
-                overlayTiles[x, y].SetActive(true);
+                // show overlay
+                if(overlayTiles[x, y]) {
+                    overlayTiles[x, y].SetActive(true);
+                }
             }
         }
     }
     public void HideOverlayTiles() {
         for (int x = 0; x < buildModeSquareSize; x++) {
             for (int y = 0; y < buildModeSquareSize; y++) {
-                overlayTiles[x, y].SetActive(false);
+                // hide overlay
+                if (overlayTiles[x, y]) {
+                    overlayTiles[x, y].SetActive(false);
+                }
             }
         }
     }
     void MoveOverlay(int centerX, int centerY) {
         for (int x = 0; x < buildModeSquareSize; x++) {
             for (int y = 0; y < buildModeSquareSize; y++) {
-                overlayTiles[x, y].transform.position = new Vector3(
-                    (centerX - buildModeSize) + x + 0.5f,
-                    (centerY - buildModeSize) + y + 0.5f,
-                    overlayTiles[x, y].transform.position.z
-                );
+                if (overlayTiles[x, y]) {
+                    overlayTiles[x, y].transform.position = new Vector3(
+                        (centerX - buildModeSize) + x + 0.5f,
+                        (centerY - buildModeSize) + y + 0.5f,
+                        overlayTiles[x, y].transform.position.z
+                    );
+                }
             }
         }
     }
@@ -79,14 +97,6 @@ public class BuildModeManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        buildModeSquareSize = (buildModeSize * 2) + 1;
-        overlayTiles = new GameObject[buildModeSquareSize, buildModeSquareSize];
-        tileOverlaySprite = Resources.Load<Sprite>("Sprites/BuildMode/tile_overlay");
     }
 
     // Update is called once per frame

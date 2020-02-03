@@ -932,6 +932,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03dce904eb0a80a4baa91d08dfa378b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  structures: {fileID: 1767068014}
   palmTree: {fileID: 8349001870027313669, guid: 13228122ef968f64fba96f757f98e915,
     type: 3}
   tileManager: {fileID: 1357930021}
