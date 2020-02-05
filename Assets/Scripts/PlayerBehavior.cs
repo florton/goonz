@@ -18,8 +18,8 @@ public class PlayerBehavior : MonoBehaviour
     private Vector3 prevPlayerDirection = Vector3.zero;
     private string selectedGroundType;
     private bool buildMode = false;
-    private float prevPlayerX;
-    private float prevPlayerY;
+    private float hiddenPlayerX;
+    private float hiddenPlayerY;
 
 
     // Start is called before the first frame update
@@ -50,20 +50,15 @@ public class PlayerBehavior : MonoBehaviour
             else {
                 currentPlayerSprite = allPlayerSprites["idle"];
             }
-        }
-        else if (playerDirection.x > 0) {
+        } else if (playerDirection.x > 0) {
             currentPlayerSprite = allPlayerSprites["right"];
-        }
-        else if (playerDirection.x < 0) {
+        } else if (playerDirection.x < 0) {
             currentPlayerSprite = allPlayerSprites["left"];
-        }
-        else if (playerDirection.y > 0) {
+        } else if (playerDirection.y > 0) {
             currentPlayerSprite = allPlayerSprites["up"];
-        }
-        else if (playerDirection.y < 0) {
+        } else if (playerDirection.y < 0) {
             currentPlayerSprite = allPlayerSprites["down"];
-        }
-        else {
+        } else {
             currentPlayerSprite = allPlayerSprites["idle"];
         }
     }
@@ -71,8 +66,7 @@ public class PlayerBehavior : MonoBehaviour
     public Sprite[] getCurrentPlayerSprite() {
         if (!buildMode) {
             return currentPlayerSprite;
-        }
-        else {
+        } else {
             return cursorSprite;
         }
     }
@@ -85,14 +79,13 @@ public class PlayerBehavior : MonoBehaviour
             float playerY = transform.position.y;
             int cursorIntX = (int)System.Math.Floor(playerX);
             int cursorIntY = (int)System.Math.Floor(playerY);
-            prevPlayerX = playerX;
-            prevPlayerY = playerY;
+            hiddenPlayerX = playerX;
+            hiddenPlayerY = playerY;
             buildModeManager.ShowOverlayTiles();
             MoveCursor(playerX, playerY, cursorIntX, cursorIntY);
-        }
-        else {
+        } else {
             // back to play mode
-            transform.position = (new Vector3(prevPlayerX, prevPlayerY, transform.position.z));
+            transform.position = (new Vector3(hiddenPlayerX, hiddenPlayerY, transform.position.z));
             buildModeManager.HideOverlayTiles();
         }
         buildMode = !buildMode;
@@ -122,7 +115,11 @@ public class PlayerBehavior : MonoBehaviour
 
             // move player
             Vector3 movementVector = new Vector3(canMoveForwardX ? change.x : 0, canMoveForwardY ? change.y : 0, 0);
-            player.MovePosition( new Vector3(playerX , playerY, 0) + movementVector * speed * Time.deltaTime);
+            Vector3 newPlayerPosition = new Vector3(playerX, playerY, 0) + movementVector * speed * Time.deltaTime;
+            player.MovePosition(newPlayerPosition);
+            if ((int)System.Math.Floor(newPlayerPosition.y) != (int)System.Math.Floor(playerY)) {
+                player.GetComponentInParent<SpriteRenderer>().sortingOrder = tileManager.getMaxMapSize() - (int)System.Math.Floor(newPlayerPosition.y);
+            }
         }
         prevPlayerDirection = playerDirection;
         playerDirection = change;
@@ -170,13 +167,11 @@ public class PlayerBehavior : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col) {
         SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
-        renderer.sortingOrder = 2;
         renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 0.65f);
     }
 
     void OnTriggerExit2D(Collider2D col) {
         SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
-        renderer.sortingOrder = 1;
         renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1);
     }
 
