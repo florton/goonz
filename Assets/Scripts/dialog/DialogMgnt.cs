@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Subtegral.DialogueSystem.DataContainers;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,38 +9,68 @@ public class DialogMgnt : MonoBehaviour
     public Text nameText;
     public Text DailogText;
     public Animator textbox;
-    public int sent;
 
+    private DialogueContainer dialogueContainer;
     private Queue<string> sentences;
+    private string currentDialogNodeId;
+    private List<string> options;
+    private List<string> optionTargetNodeIds;
 
     // Start is called before the first frame update
     void Start()
     {
         sentences = new Queue<string>();
+        options = new List<string>();
+        optionTargetNodeIds = new List<string>();
     }
 
-    public void StartDialog(Dialog dialog)
+    public void StartDialog(DialogueContainer dialogContainer, string npcName)
     {
-        nameText.text = dialog.name;
+        nameText.text = npcName;
         textbox.SetBool("isOpen", true);
         sentences.Clear();
+        dialogueContainer = dialogContainer;
+        NextDialog(dialogContainer.DialogueNodeData[0].NodeGUID);
+    }
 
-        foreach (string sentence in dialog.sentences) {
-            // dialog.friend += 1;
+    public void NextDialog(string nextNodeId) {
+        currentDialogNodeId = nextNodeId;
+        foreach (string sentence in dialogueContainer.DialogueNodeData[0].DialogueText.Split('|')) {
             sentences.Enqueue(sentence);
         }
-        DisplayNextSentences();
+        DisplayNextSentence();
     }
     
-    public void DisplayNextSentences()
+    public void DisplayNextSentence()
     {
         if (sentences.Count == 0) 
         {
-            EndDialog();
+            DisplayNextOptions();
             return;
         }
         string sentence = sentences.Dequeue();
         DailogText.text = sentence;
+    }
+
+    public void DisplayNextOptions() {
+        options = new List<string>();
+        optionTargetNodeIds = new List<string>();
+        foreach (NodeLinkData nodeLink in dialogueContainer.NodeLinks) {
+            if(nodeLink.BaseNodeGUID == currentDialogNodeId) {
+                options.Add(nodeLink.PortName);
+                optionTargetNodeIds.Add(nodeLink.TargetNodeGUID);
+            }
+        }
+        if (options.Count < 1) {
+            EndDialog();
+        }
+        // display options
+        foreach (string option in options) {
+            Debug.Log(option);
+        }
+        // whatever index is chosen go to next dialog
+        // NextDialog(dialogContainer, optionTargetNodeIds[index])
+        EndDialog(); // temp
     }
 
     public void EndDialog()

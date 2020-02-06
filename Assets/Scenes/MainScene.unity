@@ -1291,7 +1291,6 @@ MonoBehaviour:
   nameText: {fileID: 1600387702}
   DailogText: {fileID: 158083711}
   textbox: {fileID: 681416949}
-  sent: 0
 --- !u!4 &1740313061
 Transform:
   m_ObjectHideFlags: 0
@@ -1366,25 +1365,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dd3e4aa80b9338479a6bf198cc25b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inzone: 0
+  inZone: 0
   inTalks: 0
-  dialog:
-    sentences:
-    - HI im stirtmen you grand daddie'o's best friend
-    - he trust me to .00001% of this land so some of the sand is mine
-    - blah
-    sentences2:
-    - um hi again
-    - what you up too
-    sentences3:
-    - blah
-    sentences4:
-    - blah blah blah
-    - are you there
-    name: Stirtmin
-    friend: 1
+  dialogContainer: {fileID: 11400000, guid: c8a7bbe0fdab2194eb75a08abb2b3e39, type: 2}
   anim: {fileID: 1327187421}
   dailogMgnt: {fileID: 1740313060}
+  npcName: Start Man
 --- !u!212 &1934413087
 SpriteRenderer:
   m_ObjectHideFlags: 0
