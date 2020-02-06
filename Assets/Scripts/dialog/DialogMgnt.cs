@@ -35,7 +35,8 @@ public class DialogMgnt : MonoBehaviour
 
     public void NextDialog(string nextNodeId) {
         currentDialogNodeId = nextNodeId;
-        foreach (string sentence in dialogueContainer.DialogueNodeData[0].DialogueText.Split('|')) {
+        DialogueNodeData nextDialogNode = dialogueContainer.DialogueNodeData.Find(node => node.NodeGUID == currentDialogNodeId);
+        foreach (string sentence in nextDialogNode.DialogueText.Split('|')) {
             sentences.Enqueue(sentence);
         }
         DisplayNextSentence();
