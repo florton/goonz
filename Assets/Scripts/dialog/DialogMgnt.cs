@@ -65,8 +65,8 @@ public class DialogMgnt : MonoBehaviour
             EndDialog();
         }
         // display options
-        foreach (string option in options) {
-            Debug.Log(option);
+        for (int i = 0; i < options.Count; i++) {
+            Debug.Log(options[i]);
         }
         // whatever index is chosen go to next dialog
         // NextDialog(dialogContainer, optionTargetNodeIds[index])
