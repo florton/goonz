@@ -69,7 +69,7 @@ public class DialogMgnt : MonoBehaviour
             Debug.Log(options[i]);
         }
         // whatever index is chosen go to next dialog
-        // NextDialog(dialogContainer, optionTargetNodeIds[index])
+        // NextDialog(optionTargetNodeIds[index])
         EndDialog(); // temp
     }
 
