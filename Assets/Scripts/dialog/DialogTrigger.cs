@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DialogTrigger : MonoBehaviour
 {
-    public bool inzone;
+    public bool inZone;
     public bool inTalks;
 
     public Dialog dialog;
@@ -13,45 +13,30 @@ public class DialogTrigger : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        inzone = (true);
-   
+        inZone = true;  
         anim.speed = 0f;
-
-
-
     }
-
-
 
     void OnTriggerExit2D(Collider2D col)
     {
-        inzone = (false);
-        inTalks = (false);
+        inZone = false;
+        inTalks = false;
         anim.speed = 1f;
         dailogMgnt.EndDialog();
-
-
-    }
-
-    public void startConvo (Dialog dialog) 
-    {
-        dailogMgnt.StartDialog(dialog);
-       
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && inzone &! inTalks ) 
+        if (Input.GetKeyDown(KeyCode.E) && inZone && !inTalks ) 
         {
-            startConvo(dialog);
-            inTalks = (true); 
+            dailogMgnt.StartDialog(dialog);
+            inTalks = true; 
             return;
-            }
+        }
 
-        if (Input.GetKeyDown(KeyCode.E) && inzone && inTalks)
+        if (Input.GetKeyDown(KeyCode.E) && inZone && inTalks)
         {
             dailogMgnt.DisplayNextSentences();
-    
             return;
         }
 
