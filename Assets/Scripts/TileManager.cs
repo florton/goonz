@@ -252,7 +252,7 @@ public class TileManager : MonoBehaviour
         const double PI = Mathf.PI;
         double i, angle, x1, y1;
 
-        for (i = 0; i < 360; i += 1) {
+        for (i = 0; i < 360; i += 0.5f) {
             angle = i;
             x1 = r * Mathf.Cos((float)(angle * PI / 180)) * xStretch;
             y1 = r * Mathf.Sin((float)(angle * PI / 180)) * yStretch;
