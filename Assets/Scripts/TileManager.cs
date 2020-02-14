@@ -101,10 +101,7 @@ public class TileManager : MonoBehaviour
             GameObject previousEdgeTile = mapTileEdges[x, y, z];
             if (previousEdgeTile) {
                 SpriteRenderer prevEdgeRenderer = previousEdgeTile.GetComponent<SpriteRenderer>();
-                if (
-                    prevEdgeRenderer.sortingOrder == 20||
-                    countOccurrences(sortOrders, prevEdgeRenderer.sortingOrder) > 1 || 
-                    countOccurrences(sortOrders, prevEdgeRenderer.sortingOrder + 1) > 0) {
+                if (prevEdgeRenderer.sortingOrder == 20 || countOccurrences(sortOrders, prevEdgeRenderer.sortingOrder + 1) > 0) {
                     prevEdgeRenderer.sortingOrder = prevEdgeRenderer.sortingOrder - 1;
                 }
             }
