@@ -8,7 +8,7 @@ public class time : MonoBehaviour
     private float day = 0.5f;
     public float min;
     public float hours;
-    private const float DaytoSecRat = 600f;
+    private const float DaytoSecRat = 60f;
     public Text hrsclock;
     public Text minclock;
     public float sun;

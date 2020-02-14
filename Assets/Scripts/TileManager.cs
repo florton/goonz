@@ -77,13 +77,34 @@ public class TileManager : MonoBehaviour
         return allEdgesSameType && tileIsNotEmpty;
     }
 
+    int countOccurrences(int[] arr, int x) {
+        int res = 0;
+        for (int i = 0; i < arr.Length; i++) {
+            if (x == arr[i]) {
+                res++;
+            }
+        }
+        return res;
+    }
+
     void LowerSortOrderOfAllEdges(int x, int y){
-        // lower previous edge zs sorting order by one 
+        // index sort orders
+        int[] sortOrders = new int[9];
+        for (int z = 0; z < 8; z++) {
+            GameObject previousEdgeTile = mapTileEdges[x, y, z];
+            if (previousEdgeTile) {
+                sortOrders[z] = previousEdgeTile.GetComponent<SpriteRenderer>().sortingOrder;
+            }
+        }
+        // lower previous edge zs sorting order by one, if needed
         for (int z = 0; z < 8; z++) {
             GameObject previousEdgeTile = mapTileEdges[x, y, z];
             if (previousEdgeTile) {
                 SpriteRenderer prevEdgeRenderer = previousEdgeTile.GetComponent<SpriteRenderer>();
-                if (prevEdgeRenderer.sortingOrder > 2) {
+                if (
+                    prevEdgeRenderer.sortingOrder == 20||
+                    countOccurrences(sortOrders, prevEdgeRenderer.sortingOrder) > 1 || 
+                    countOccurrences(sortOrders, prevEdgeRenderer.sortingOrder + 1) > 0) {
                     prevEdgeRenderer.sortingOrder = prevEdgeRenderer.sortingOrder - 1;
                 }
             }
