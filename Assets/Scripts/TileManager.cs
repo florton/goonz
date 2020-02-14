@@ -248,18 +248,18 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    void createBlockCircle(int x, int y, int r, string type, float xStretch = 1, float yStretch = 1) {
+    void createBlockCircle(int x, int y, float r, string type, float xStretch = 1, float yStretch = 1) {
         const double PI = Mathf.PI;
         double i, angle, x1, y1;
 
-        for (i = 0; i < 360; i += 0.5f) {
+        for (i = 0; i < 360; i += 1) {
             angle = i;
             x1 = r * Mathf.Cos((float)(angle * PI / 180)) * xStretch;
             y1 = r * Mathf.Sin((float)(angle * PI / 180)) * yStretch;
             setOrCreateMapTile((int) Math.Round(x + x1), (int) Math.Round(y + y1), type);
         }
         if (r > 1) {
-            createBlockCircle(x, y, r - 1, type, xStretch, yStretch);
+            createBlockCircle(x, y, r - 0.5f, type, xStretch, yStretch);
         }
     }
 
