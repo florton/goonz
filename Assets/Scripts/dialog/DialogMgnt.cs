@@ -9,6 +9,9 @@ public class DialogMgnt : MonoBehaviour
     public Text nameText;
     public Text DailogText;
     public Animator textbox;
+    public Button button1;
+    public Button button2;
+    public Button button3;
 
     private DialogueContainer dialogueContainer;
     private Queue<string> sentences;
@@ -33,7 +36,21 @@ public class DialogMgnt : MonoBehaviour
         NextDialog(dialogContainer.DialogueNodeData[0].NodeGUID);
     }
 
+    public void showButtons(bool visible) {
+        if (options.Count > 0 || !visible) {
+            button1.gameObject.SetActive(visible);
+        }
+        if (options.Count > 1 || !visible) {
+            button2.gameObject.SetActive(visible);
+        }
+        if (options.Count > 2 || !visible) {
+            button3.gameObject.SetActive(visible);
+        }
+    }
+
     public void NextDialog(string nextNodeId) {
+        // hide options
+        showButtons(false);        
         currentDialogNodeId = nextNodeId;
         DialogueNodeData nextDialogNode = dialogueContainer.DialogueNodeData.Find(node => node.NodeGUID == currentDialogNodeId);
         foreach (string sentence in nextDialogNode.DialogueText.Split('|')) {
@@ -66,16 +83,24 @@ public class DialogMgnt : MonoBehaviour
             EndDialog();
         }
         // display options
+        string optionsString = "";
         for (int i = 0; i < options.Count; i++) {
-            Debug.Log(options[i]);
+            optionsString += options[i] + "\n";
         }
-        // whatever index is chosen go to next dialog
-        // NextDialog(optionTargetNodeIds[index])
-        EndDialog(); // temp
+        DailogText.text = optionsString;
+        // show options
+        showButtons(true);
     }
+    // whatever index is chosen go to next dialog
     public void opt1()
-    { 
-    
+    {
+        NextDialog(optionTargetNodeIds[0]);
+    }
+    public void opt2() {
+        NextDialog(optionTargetNodeIds[1]);
+    }
+    public void opt3() {
+        NextDialog(optionTargetNodeIds[2]);
     }
     public void EndDialog()
     {
