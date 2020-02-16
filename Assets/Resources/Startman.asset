@@ -17,18 +17,18 @@ MonoBehaviour:
     PortName: Next
     TargetNodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
   - BaseNodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
-    PortName: Option 1
+    PortName: hi man
     TargetNodeGUID: 79d2f99f-3555-4f78-905a-672055f38b4d
   - BaseNodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
-    PortName: Option 2
+    PortName: fuck you
     TargetNodeGUID: d50247c5-58d7-4bc8-983e-55ceb63f04f6
   DialogueNodeData:
+  - NodeGUID: d50247c5-58d7-4bc8-983e-55ceb63f04f6
+    DialogueText: what the fuck?
+    Position: {x: 879, y: 261}
+  - NodeGUID: 79d2f99f-3555-4f78-905a-672055f38b4d
+    DialogueText: 'you seem nice '
+    Position: {x: 930, y: 97}
   - NodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
     DialogueText: Hello | My name is startman | nice to meet you
-    Position: {x: 233, y: 188}
-  - NodeGUID: 79d2f99f-3555-4f78-905a-672055f38b4d
-    DialogueText: Dialogue Node 1
-    Position: {x: 507, y: 134}
-  - NodeGUID: d50247c5-58d7-4bc8-983e-55ceb63f04f6
-    DialogueText: Dialogue Node 2
-    Position: {x: 505, y: 261}
+    Position: {x: 450, y: 154}
