@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogMgnt : MonoBehaviour
+public class DialogMgnt : MonoBehaviour  
 {
     public Text nameText;
     public Text DailogText;
@@ -73,7 +73,10 @@ public class DialogMgnt : MonoBehaviour
         // NextDialog(optionTargetNodeIds[index])
         EndDialog(); // temp
     }
-
+    public void opt1()
+    { 
+    
+    }
     public void EndDialog()
     {
         textbox.SetBool("isOpen", false);
