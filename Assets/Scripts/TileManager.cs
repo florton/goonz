@@ -77,13 +77,31 @@ public class TileManager : MonoBehaviour
         return allEdgesSameType && tileIsNotEmpty;
     }
 
+    int countOccurrences(int[] arr, int x) {
+        int res = 0;
+        for (int i = 0; i < arr.Length; i++) {
+            if (x == arr[i]) {
+                res++;
+            }
+        }
+        return res;
+    }
+
     void LowerSortOrderOfAllEdges(int x, int y){
-        // lower previous edge zs sorting order by one 
+        // index sort orders
+        int[] sortOrders = new int[9];
+        for (int z = 0; z < 8; z++) {
+            GameObject previousEdgeTile = mapTileEdges[x, y, z];
+            if (previousEdgeTile) {
+                sortOrders[z] = previousEdgeTile.GetComponent<SpriteRenderer>().sortingOrder;
+            }
+        }
+        // lower previous edge zs sorting order by one, if needed
         for (int z = 0; z < 8; z++) {
             GameObject previousEdgeTile = mapTileEdges[x, y, z];
             if (previousEdgeTile) {
                 SpriteRenderer prevEdgeRenderer = previousEdgeTile.GetComponent<SpriteRenderer>();
-                if (prevEdgeRenderer.sortingOrder > 2) {
+                if (prevEdgeRenderer.sortingOrder == 20 || countOccurrences(sortOrders, prevEdgeRenderer.sortingOrder + 1) > 0) {
                     prevEdgeRenderer.sortingOrder = prevEdgeRenderer.sortingOrder - 1;
                 }
             }
@@ -248,7 +266,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    void createBlockCircle(int x, int y, int r, string type, float xStretch = 1, float yStretch = 1) {
+    void createBlockCircle(int x, int y, float r, string type, float xStretch = 1, float yStretch = 1) {
         const double PI = Mathf.PI;
         double i, angle, x1, y1;
 
@@ -259,7 +277,7 @@ public class TileManager : MonoBehaviour
             setOrCreateMapTile((int) Math.Round(x + x1), (int) Math.Round(y + y1), type);
         }
         if (r > 1) {
-            createBlockCircle(x, y, r - 1, type, xStretch, yStretch);
+            createBlockCircle(x, y, r - 0.5f, type, xStretch, yStretch);
         }
     }
 

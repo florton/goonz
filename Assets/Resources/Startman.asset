@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b3fd9154634ebdb8c8a48960b9a16a, type: 3}
+  m_Name: Startman
+  m_EditorClassIdentifier: 
+  NodeLinks:
+  - BaseNodeGUID: aaddab41-d869-4faf-8734-45b96cfb871b
+    PortName: Next
+    TargetNodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
+  - BaseNodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
+    PortName: hi man
+    TargetNodeGUID: 79d2f99f-3555-4f78-905a-672055f38b4d
+  - BaseNodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
+    PortName: fuck you
+    TargetNodeGUID: d50247c5-58d7-4bc8-983e-55ceb63f04f6
+  DialogueNodeData:
+  - NodeGUID: d50247c5-58d7-4bc8-983e-55ceb63f04f6
+    DialogueText: what the fuck?
+    Position: {x: 879, y: 261}
+  - NodeGUID: 79d2f99f-3555-4f78-905a-672055f38b4d
+    DialogueText: 'you seem nice '
+    Position: {x: 930, y: 97}
+  - NodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
+    DialogueText: Hello | My name is startman | nice to meet you
+    Position: {x: 450, y: 154}
