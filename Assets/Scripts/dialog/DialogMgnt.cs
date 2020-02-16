@@ -34,7 +34,8 @@ public class DialogMgnt : MonoBehaviour
         textbox.SetBool("isOpen", true);
         sentences.Clear();
         dialogueContainer = dialogContainer;
-        NextDialog(dialogContainer.DialogueNodeData[0].NodeGUID);
+        // Next = Start node
+        NextDialog(dialogContainer.NodeLinks.Find(node => node.PortName == "Next").TargetNodeGUID);
     }
 
     public void showButtons(bool visible) {
