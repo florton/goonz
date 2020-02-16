@@ -13,6 +13,7 @@ public class DialogMgnt : MonoBehaviour
     public Button button2;
     public Button button3;
     public Text optext1;
+    public Text optext2;
 
     private DialogueContainer dialogueContainer;
     private Queue<string> sentences;
@@ -89,8 +90,9 @@ public class DialogMgnt : MonoBehaviour
         for (int i = 0; i < options.Count; i++) {
             optionsString += options[i] + "\n";
         }
-        DailogText.text = optionsString;
+        //DailogText.text = optionsString;
         optext1.text = options[0];
+        optext2.text = options[1];
         // show options
         showButtons(true);
     }
