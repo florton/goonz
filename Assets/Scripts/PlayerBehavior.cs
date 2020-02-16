@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBehavior : MonoBehaviour
-{
+public class PlayerBehavior : MonoBehaviour {
     public float speed;
     public TileManager tileManager;
     public Material spriteMaterial;
@@ -23,7 +22,7 @@ public class PlayerBehavior : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start(){
+    void Start() {
         player = GetComponent<Rigidbody2D>();
         buildModeManager = GetComponent<BuildModeManager>();
         selectedGroundType = tileManager.GetGroundTypes()[0];
@@ -50,15 +49,20 @@ public class PlayerBehavior : MonoBehaviour
             else {
                 currentPlayerSprite = allPlayerSprites["idle"];
             }
-        } else if (playerDirection.x > 0) {
+        }
+        else if (playerDirection.x > 0) {
             currentPlayerSprite = allPlayerSprites["right"];
-        } else if (playerDirection.x < 0) {
+        }
+        else if (playerDirection.x < 0) {
             currentPlayerSprite = allPlayerSprites["left"];
-        } else if (playerDirection.y > 0) {
+        }
+        else if (playerDirection.y > 0) {
             currentPlayerSprite = allPlayerSprites["up"];
-        } else if (playerDirection.y < 0) {
+        }
+        else if (playerDirection.y < 0) {
             currentPlayerSprite = allPlayerSprites["down"];
-        } else {
+        }
+        else {
             currentPlayerSprite = allPlayerSprites["idle"];
         }
     }
@@ -66,7 +70,8 @@ public class PlayerBehavior : MonoBehaviour
     public Sprite[] getCurrentPlayerSprite() {
         if (!buildMode) {
             return currentPlayerSprite;
-        } else {
+        }
+        else {
             return cursorSprite;
         }
     }
@@ -83,7 +88,8 @@ public class PlayerBehavior : MonoBehaviour
             hiddenPlayerY = playerY;
             buildModeManager.ShowOverlayTiles();
             MoveCursor(playerX, playerY, cursorIntX, cursorIntY);
-        } else {
+        }
+        else {
             // back to play mode
             transform.position = (new Vector3(hiddenPlayerX, hiddenPlayerY, transform.position.z));
             buildModeManager.HideOverlayTiles();
@@ -102,7 +108,7 @@ public class PlayerBehavior : MonoBehaviour
     }
 
     // player movement
-    void MovePlayer(float playerX, float playerY){
+    void MovePlayer(float playerX, float playerY) {
         // get player position & movement info
         if (change != Vector3.zero) {
             // keep player within map edges
@@ -128,7 +134,7 @@ public class PlayerBehavior : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update(){
+    void Update() {
         change = new Vector3(
             Input.GetKey("right") ? 1 : (Input.GetKey("left") ? -1 : 0),
             Input.GetKey("up") ? 1 : (Input.GetKey("down") ? -1 : 0),
@@ -173,6 +179,14 @@ public class PlayerBehavior : MonoBehaviour
     void OnTriggerExit2D(Collider2D col) {
         SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
         renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1);
+
+        if (col.CompareTag("dialog")) {
+            return;
+        }
+        else {
+            renderer.sortingOrder = 2;
+            renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 0.65f);
+        }
     }
 
 }
