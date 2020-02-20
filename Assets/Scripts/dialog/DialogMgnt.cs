@@ -82,8 +82,9 @@ public class DialogMgnt : MonoBehaviour
                 optionTargetNodeIds.Add(nodeLink.TargetNodeGUID);
             }
         }
-        if (options.Count < 1) {
+        if (options.Count == 0) {
             EndDialog();
+            return;
         }
         // display options
         string optionsString = "";

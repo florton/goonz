@@ -172,20 +172,22 @@ public class PlayerBehavior : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D col) {
-        SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
-        renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 0.65f);
-    }
-
-    void OnTriggerExit2D(Collider2D col) {
-        SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
-        renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1);
-
         if (col.CompareTag("dialog")) {
             return;
         }
         else {
-            renderer.sortingOrder = 2;
+            SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
             renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 0.65f);
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D col) {
+        if (col.CompareTag("dialog")) {
+            return;
+        }
+        else {
+            SpriteRenderer renderer = col.GetComponentInParent<SpriteRenderer>();
+            renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1f);
         }
     }
 
