@@ -68,11 +68,11 @@ public class DialogMgnt : MonoBehaviour
         List<string> sentances = new List<string>(nextDialogNode.DialogueText.Split('|'));
         if (nextDialog.Contains("[check~")) {
             string condition = Regex.Matches(nextDialog, @"\[check~([^\)]*)\]")[0].Groups[1].Value;
-            MatchCollection dialogPossibilities = Regex.Matches(nextDialog, @"\(([^\)]*)\).*\(([^\)]*)\)");
+            Match dialogPossibilities = Regex.Matches(nextDialog, @"\(([^\)]*)\).*\(([^\)]*)\)")[0];
             if (gameEvents.checkCondition(condition)) {
-                sentances = new List<string>(dialogPossibilities[0].Groups[1].Value.Split('|'));
+                sentances = new List<string>(dialogPossibilities.Groups[1].Value.Split('|'));
             } else {
-                sentances = new List<string>(dialogPossibilities[0].Groups[2].Value.Split('|'));
+                sentances = new List<string>(dialogPossibilities.Groups[2].Value.Split('|'));
             }
         }
         foreach (string sentence in sentances) {

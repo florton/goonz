@@ -14,6 +14,14 @@ public class GameEvents : MonoBehaviour
         events = new Dictionary<string, bool>();
     }
 
+    public bool eventHasTriggered(string eventString) {
+        return events.ContainsKey(eventString) && events[eventString];
+    }
+
+    private void saveOneTimeEvent(string eventString) {
+        events.Add(eventString, true);
+    }
+
     public bool checkCondition(string condition) {
         switch (condition) {
             case "friendshipIsOver1":
@@ -24,14 +32,6 @@ public class GameEvents : MonoBehaviour
                 Debug.Log("could not find condition " + condition);
                 return false;                
         }
-    }
-
-    public bool eventHasTriggered(string eventString){
-        return events.ContainsKey(eventString) && events[eventString];
-    }
-
-    private void saveOneTimeEvent(string eventString) {
-        events.Add(eventString, true);
     }
 
     public bool triggerEvent(string eventString) {
