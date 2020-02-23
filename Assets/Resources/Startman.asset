@@ -22,13 +22,21 @@ MonoBehaviour:
   - BaseNodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
     PortName: fuck you
     TargetNodeGUID: d50247c5-58d7-4bc8-983e-55ceb63f04f6
+  - BaseNodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
+    PortName: can you spare some change?
+    TargetNodeGUID: c7d7fb80-b8d3-41e5-b9dc-6404297d21f1
   DialogueNodeData:
+  - NodeGUID: c7d7fb80-b8d3-41e5-b9dc-6404297d21f1
+    DialogueText: '[check~didGainStartingGold] (Dont be greedy) (Yeah sure have this
+      | [event~gainStartingGold])'
+    Position: {x: 977, y: 349}
   - NodeGUID: d50247c5-58d7-4bc8-983e-55ceb63f04f6
-    DialogueText: what the fuck?
-    Position: {x: 879, y: 261}
+    DialogueText: what the fuck? | [event~subtract1Friendship]
+    Position: {x: 982, y: 231}
   - NodeGUID: 79d2f99f-3555-4f78-905a-672055f38b4d
-    DialogueText: 'you seem nice '
-    Position: {x: 930, y: 97}
+    DialogueText: you seem nice | [event~add1Friendship]
+    Position: {x: 986, y: 97}
   - NodeGUID: f0068624-0c7e-4736-8c34-4931ba446f14
-    DialogueText: Hello | My name is startman | nice to meet you
-    Position: {x: 450, y: 154}
+    DialogueText: '[check~friendshipIsOver1] (Hey buddy its your pal startman) (Hello
+      | My name is startman | nice to meet you)'
+    Position: {x: 114, y: 271}

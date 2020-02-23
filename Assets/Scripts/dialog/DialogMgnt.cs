@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class DialogMgnt : MonoBehaviour  
 {
@@ -14,6 +15,8 @@ public class DialogMgnt : MonoBehaviour
     public Button button3;
     public Text optext1;
     public Text optext2;
+    public Text optext3;
+    public GameEvents gameEvents;
 
     private DialogueContainer dialogueContainer;
     private Queue<string> sentences;
@@ -39,38 +42,68 @@ public class DialogMgnt : MonoBehaviour
         NextDialog(dialogContainer.NodeLinks.Find(node => node.PortName == "Next").TargetNodeGUID);
     }
 
-    public void showButtons(bool visible) {
-        if (options.Count > 0 || !visible) {
-            button1.gameObject.SetActive(visible);
+    public void showOptions() {
+        if (options.Count > 0) {
+            optext1.text = options[0];
+            button1.gameObject.SetActive(true);
         }
-        if (options.Count > 1 || !visible) {
-            button2.gameObject.SetActive(visible);
+        if (options.Count > 1) {
+            optext2.text = options[1];
+            button2.gameObject.SetActive(true);
         }
-        if (options.Count > 2 || !visible) {
-            button3.gameObject.SetActive(visible);
+        if (options.Count > 2) {
+            optext3.text = options[2];
+            button3.gameObject.SetActive(true);
         }
     }
 
-    public void NextDialog(string nextNodeId) {
-        // hide options
-        showButtons(false);        
-        currentDialogNodeId = nextNodeId;
-        DialogueNodeData nextDialogNode = dialogueContainer.DialogueNodeData.Find(node => node.NodeGUID == currentDialogNodeId);
-        foreach (string sentence in nextDialogNode.DialogueText.Split('|')) {
+    public void hideOptions() {
+        button1.gameObject.SetActive(false);
+        button2.gameObject.SetActive(false);
+        button3.gameObject.SetActive(false);
+    }
+
+    private void ParseDialog(DialogueNodeData nextDialogNode) {
+        string nextDialog = nextDialogNode.DialogueText;
+        List<string> sentances = new List<string>(nextDialogNode.DialogueText.Split('|'));
+        if (nextDialog.Contains("[check~")) {
+            string condition = Regex.Matches(nextDialog, @"\[check~([^\)]*)\]")[0].Groups[1].Value;
+            MatchCollection dialogPossibilities = Regex.Matches(nextDialog, @"\(([^\)]*)\).*\(([^\)]*)\)");
+            if (gameEvents.checkCondition(condition)) {
+                sentances = new List<string>(dialogPossibilities[0].Groups[1].Value.Split('|'));
+            } else {
+                sentances = new List<string>(dialogPossibilities[0].Groups[2].Value.Split('|'));
+            }
+        }
+        foreach (string sentence in sentances) {
             sentences.Enqueue(sentence);
         }
         DisplayNextSentence();
     }
+
+    public void NextDialog(string nextNodeId) {
+        hideOptions();        
+        currentDialogNodeId = nextNodeId;
+        DialogueNodeData nextDialogNode = dialogueContainer.DialogueNodeData.Find(node => node.NodeGUID == currentDialogNodeId);
+        ParseDialog(nextDialogNode);
+    }
     
     public void DisplayNextSentence()
     {
-        if (sentences.Count == 0) 
-        {
+        if (sentences.Count == 0){
             DisplayNextOptions();
             return;
         }
         string sentence = sentences.Dequeue();
-        DailogText.text = sentence;
+        if (sentence.Contains("[event~")) {
+            string eventString = Regex.Matches(sentence, @"\[event~([^\)]*)\]")[0].Groups[1].Value;
+            gameEvents.triggerEvent(eventString);
+            DisplayNextOptions();
+            return;
+        }
+        else {
+            DailogText.text = sentence;
+        }
     }
 
     public void DisplayNextOptions() {
@@ -91,11 +124,8 @@ public class DialogMgnt : MonoBehaviour
         for (int i = 0; i < options.Count; i++) {
             optionsString += options[i] + "\n";
         }
-        //DailogText.text = optionsString;
-        optext1.text = options[0];
-        optext2.text = options[1];
         // show options
-        showButtons(true);
+        showOptions();
     }
     // whatever index is chosen go to next dialog
     public void opt1()
